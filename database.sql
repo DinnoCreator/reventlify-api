@@ -45,7 +45,7 @@ CREATE TABLE clients (
 CREATE TABLE limbo (
     client_email TEXT NOT NULL UNIQUE,
     client_verify TEXT,
-	client_status TEXT NOT NULL,
+    client_status TEXT NOT NULL,
     c_date DATE NOT NULL,
     c_time TIME NOT NULL
 );
@@ -107,16 +107,46 @@ CREATE TABLE preference (
     preference_two TEXT NOT NULL,
     preference_three TEXT NOT NULL,
     edit_date DATE NOT NULL,
-    edit_time TIME NOT NULL
-    c_date DATE NOT NULL,
+    edit_time TIME NOT NULL c_date DATE NOT NULL,
     c_time TIME NOT NULL
 );
-
-select * from company;
-select * from clients;
-select * from clients where client_name like '%it%';
-update clients set client_name = 'gojo' where client_name = 'Gojo';
-select sum(client_accbal) as total_earnings from clients;
-select avg(client_accbal) as average_earnings from clients;
-select max(client_accbal) as max_earnings from clients;
-select count(distinct c_date) as total_date from clients;
+select *
+from company;
+select *
+from clients;
+select *
+from clients
+where client_name like '%it%';
+update clients
+set client_name = 'gojo'
+where client_name = 'Gojo';
+select sum(client_accbal) as total_earnings
+from clients;
+select avg(client_accbal) as average_earnings
+from clients;
+select max(client_accbal) as max_earnings
+from clients;
+select count(distinct c_date) as total_date
+from clients;
+select regime_id,
+    regime_name,
+    regime_address,
+    regime_city,
+    regime_state,
+    regime_country,
+    regime_media,
+    regime_description,
+    regime_start_date,
+    regime_start_time,
+    regime_end_date,
+    regime_end_time,
+    c_date,
+    c_time
+from regimes
+where regime_type = 'concert'
+    or regime_type = 'theatre'
+    or regime_type = 'conference'
+    and regime_city = 'calabar'
+order by (c_date, c_time) DESC;
+select *
+from pricings;

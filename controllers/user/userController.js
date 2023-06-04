@@ -2,6 +2,7 @@ const i = require("../user/services/personalization");
 const ii = require("../user/services/events/events_query/eventsQuery");
 const iii = require("../user/services/events/events_creation_or_modification/nameAvailability");
 const iv = require("../user/services/events/events_creation_or_modification/createEvent");
+const v = require("../user/services/events/pricing_query/pricingQuery");
 
 // personalizationChecker
 exports.personalizationChecker = i.personalizationChecker;
@@ -20,3 +21,9 @@ exports.regimesQueryOnline = ii.eventQueryPersonalizedOrNot;
 
 // queries regimes offline
 exports.regimesQueryOffline = ii.offline;
+
+// queries pricings online
+exports.pricingsOnline = v.pricingQueryOnline;
+
+// queries pricings offline
+exports.pricingsOffline = v.pricingQueryOffline;

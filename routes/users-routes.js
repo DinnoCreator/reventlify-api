@@ -24,9 +24,15 @@ router.post("/regimecheck", authenticateToken, users.nameCheck);
 router.post("/regimecreate", authenticateToken, users.regimeCreate);
 
 // queries regimes online
-router.get("/onlineregimesquery", authenticateToken, users.regimesQueryOnline);
+router.get("/regimesonline", authenticateToken, users.regimesQueryOnline);
 
 // queries regimes offline
-router.get("/offlineregimesquery", users.regimesQueryOffline);
+router.get("/regimesoffline", users.regimesQueryOffline);
+
+// queries pricings online
+router.get("/pricingsonline", authenticateToken, users.pricingsOnline);
+
+// queries pricings offline
+router.get("/pricingsoffline", users.pricingsOffline);
 
 module.exports = router;

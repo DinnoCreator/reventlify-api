@@ -35,4 +35,10 @@ router.get("/pricingsonline", authenticateToken, users.pricingsOnline);
 // queries pricings offline
 router.get("/pricingsoffline", users.pricingsOffline);
 
+// ticket purchase
+router.post("/buyticket", users.purchaseInitializer);
+
+// ticket purchase verifier
+router.get("/purchaseverify/:reference", users.purchaseVerifier);
+
 module.exports = router;

@@ -39,6 +39,6 @@ router.get("/pricingsoffline", users.pricingsOffline);
 router.post("/buyticket", users.purchaseInitializer);
 
 // ticket purchase verifier
-router.get("/purchaseverify/:reference", users.purchaseVerifier);
+router.post("/purchaseverify", users.purchaseVerifier);
 
 module.exports = router;

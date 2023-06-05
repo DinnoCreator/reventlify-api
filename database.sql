@@ -93,6 +93,7 @@ CREATE TABLE affiliates (
 CREATE TABLE tickets (
     ticket_id TEXT NOT NULL UNIQUE,
     pricing_id TEXT NOT NULL REFERENCES pricings(pricing_id) ON DELETE CASCADE ON UPDATE CASCADE,
+    transaction_id TEXT NOT NULL REFERENCES transactions(transaction_id) ON DELETE CASCADE ON UPDATE CASCADE,
     ticket_buyer_id TEXT NOT NULL REFERENCES clients(client_id) ON DELETE CASCADE ON UPDATE CASCADE,
     ticket_owner_id TEXT NOT NULL REFERENCES clients(client_id) ON DELETE CASCADE ON UPDATE CASCADE,
     ticket_amount NUMERIC(17, 2) NOT NULL,
@@ -107,8 +108,20 @@ CREATE TABLE preference (
     preference_two TEXT NOT NULL,
     preference_three TEXT NOT NULL,
     edit_date DATE NOT NULL,
-    edit_time TIME NOT NULL c_date DATE NOT NULL,
+    edit_time TIME NOT NULL, c_date DATE NOT NULL,
     c_time TIME NOT NULL
+);
+CREATE TABLE transactions (
+    transaction_id TEXT NOT NULL UNIQUE, 
+    client_id TEXT NOT NULL REFERENCES clients(client_id) ON DELETE CASCADE ON UPDATE CASCADE,
+    regime_id TEXT NOT NULL REFERENCES regimes(regime_id) ON DELETE CASCADE ON UPDATE CASCADE,
+    pricing_id TEXT NOT NULL REFERENCES pricings(pricing_id) ON DELETE CASCADE ON UPDATE CASCADE,
+    reference_number TEXT NOT NULL,
+    amount NUMERIC(17, 2) NOT NULL,
+    transaction_status TEXT NOT NULL,
+    transaction_description TEXT NOT NULL,
+    transaction_date DATE NOT NULL,
+    transaction_time TIME NOT NULL
 );
 select *
 from company;

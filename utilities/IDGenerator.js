@@ -80,6 +80,60 @@ exports.pricingID = async (typePrefix) => {
   }
 };
 
+// generates transaction IDs
+exports.transactionID = async () => {
+  // generates pricing ID
+  let idP = randomString({
+    length: 10,
+    numeric: true,
+    letters: false,
+    special: false,
+  });
+  try {
+    // Checks if the ID already exists
+    const checker = await pool.query(
+      "SELECT * FROM transactions WHERE transaction_id = $1",
+      [idP]
+    );
+
+    if (checker.rows.length !== 0) {
+      return pricingID();
+    } else {
+      // Return Unique ID
+      return idP;
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+// generates ticket IDs
+exports.ticketID = async () => {
+  // generates pricing ID
+  let idP = randomString({
+    length: 10,
+    numeric: true,
+    letters: false,
+    special: false,
+  });
+  try {
+    // Checks if the ID already exists
+    const checker = await pool.query(
+      "SELECT * FROM tickets WHERE ticket_id = $1",
+      [idP]
+    );
+
+    if (checker.rows.length !== 0) {
+      return ticketID();
+    } else {
+      // Return Unique ID
+      return idP;
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 // const pricing = [
 //   {
 //     pricingName: "regular",

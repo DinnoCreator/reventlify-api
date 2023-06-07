@@ -36,9 +36,9 @@ router.get("/pricingsonline", authenticateToken, users.pricingsOnline);
 router.get("/pricingsoffline", users.pricingsOffline);
 
 // ticket purchase
-router.post("/buyticket", users.purchaseInitializer);
+router.post("/buyticket", authenticateToken, users.purchaseInitializer);
 
 // ticket purchase verifier
-router.post("/purchaseverify", users.purchaseVerifier);
+router.post("/purchaseverify", authenticateToken, users.purchaseVerifier);
 
 module.exports = router;

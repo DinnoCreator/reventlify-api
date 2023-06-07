@@ -16,7 +16,7 @@ exports.personalizationChecker = async (req, res) => {
       return res.status(200).json("User experience is personalized");
     }
   } catch (error) {
-    return res.status(418).json(error.message);
+    return res.status(500).json(error.message);
   }
 };
 exports.personalization = async (req, res) => {
@@ -47,6 +47,6 @@ exports.personalization = async (req, res) => {
 
     return res.status(200).json("User experience just got personalized");
   } catch (error) {
-    return res.status(418).json(error.message);
+    return res.status(500).json(error.message);
   }
 };

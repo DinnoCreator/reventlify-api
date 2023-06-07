@@ -163,3 +163,56 @@ where regime_type = 'concert'
 order by (c_date, c_time) DESC;
 select *
 from pricings;
+
+INSERT INTO company (
+	company_id,
+	company_name,
+	company_email,
+	company_address,
+	company_city,
+    company_state,
+    company_country,
+    company_password,
+    company_logo,
+    company_logo_id,
+    company_accbal,
+    theatre_percentage,
+    concert_percentage,
+    service_percentage,
+    conference_percentage,
+    pageantry_percentage,
+    education_percentage,
+    carnival_percentage,
+    festival_percentage,
+    party_percentage,
+    sport_percentage,
+    talentshow_percentage,
+    c_date,
+    c_time
+) 
+VALUES (
+	'id', 
+	'reventlify', 
+	'edijay17@gmail.com',
+	'22 road b close',
+	'festac town',
+	'lagos',
+	'nigeria',
+	'password',
+	'logo',
+	'logo_id',
+	0.00,
+	10,
+	10,
+	10,
+	10,
+	10,
+	10,
+	10,
+	10,
+	10,
+	10,
+	10,
+	'2023-06-07',
+	'13:19:02'
+);

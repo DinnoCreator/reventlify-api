@@ -152,6 +152,6 @@ exports.createRegime = async (req, res) => {
     // return
     return res.status(200).json({ "Regime Creation": "Successful!" });
   } catch (error) {
-    return console.log(error);
+    return res.status(500).json(error.message);
   }
 };

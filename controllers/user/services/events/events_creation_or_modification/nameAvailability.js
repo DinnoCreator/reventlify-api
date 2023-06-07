@@ -12,6 +12,6 @@ exports.nameAvailability = async (req, res) => {
       return res.status(409).json("Regime name already exists");
     return res.status(200).json("Regime name does not exists");
   } catch (error) {
-    return;
+    return res.status(500).json(error.message);
   }
 };

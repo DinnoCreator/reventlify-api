@@ -90,6 +90,6 @@ exports.verifyCode = async (req, res) => {
 
     return res.status(200).json({ message: "Email Verified!" });
   } catch (error) {
-    return res.status(418).json({ err: error.message });
+    return res.status(500).json({ err: error.message });
   }
 };

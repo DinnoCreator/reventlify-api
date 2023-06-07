@@ -1,18 +1,60 @@
 const axios = require("axios");
 const pool = require("../../../../db");
+const nodemailer = require("nodemailer");
+const capNsmalz = require("../../../../utilities/capNsmalz");
 const {
   transactionID,
   ticketID,
 } = require("../../../../utilities/IDGenerator");
 const dayjs = require("dayjs");
+const {
+  percentages,
+  companyCurrentBal,
+  clientCurrentBal,
+} = require("../../../../utilities/percentagesAndBalance");
 exports.ticketsPurchase = async (req, res) => {
   // request body from the clients
-  const { email, amount } = req.body;
+  const { email, amount, pricingId } = req.body;
   try {
+    // gets the amount for the ticket and the id for that pricing
+    const pricingAmount = await pool.query(
+      "SELECT pricing_amount, pricing_id FROM pricings WHERE pricing_id = $1",
+      [pricingId]
+    );
+    // gets the amount for the ticket and the id for that pricing
+    const ticketsBought = await pool.query(
+      "SELECT ticket_buyer_id, ticket_id FROM tickets WHERE ticket_buyer_id = $1",
+      [userId]
+    );
+
+    const ticketPrice = Number(pricingAmount.rows[0].pricing_amount);
+    const amountNumber = Number(amount);
+    // gets the number of tickets purchased
+    const numberOfTickets = amountNumber / ticketPrice;
+
+    // checks if user has purchased up to 10 tickets
+    if (ticketsBought.rows.length === 10)
+      return res
+        .status(400)
+        .json(`You have reached the ticket purchase limit(10) for this event.`);
+
+    // checks if user is trying to pay less than the price for the ticket
+    if (amountNumber < ticketPrice)
+      return res
+        .status(402)
+        .json(
+          `The amount inputed, is less than the price of the ticket. Which is ${ticketPrice}.`
+        );
+
+    // checks if user is trying to buy more than 10 tickets
+    if (numberOfTickets > 10)
+      return res
+        .status(402)
+        .json(`Each user's maximum number of tickets purchase per event is 10`);
     // params
     const params = JSON.stringify({
       email: email,
-      amount: amount * 100,
+      amount: amountNumber * 100,
     });
 
     const response = await axios({
@@ -35,10 +77,47 @@ exports.ticketsPurchase = async (req, res) => {
 };
 
 exports.purchaseVerifier = async (req, res) => {
-  // request params from the clients
-  const { reference, status, regimeId, pricingId, userId, affiliate } =
-    req.body;
+  const userEmail = req.email;
+  const userName = req.name;
+  const userId = req.user;
   try {
+    // request params from the client side
+    const { reference, status, regimeId, pricingId, affiliate } = req.body;
+
+    // checks if transaction already exists in the database
+    const transactionExistence = await pool.query(
+      "SELECT * FROM transactions WHERE reference_number = $1",
+      [reference]
+    );
+
+    // regime details
+    const regimeDetails = await pool.query(
+      "SELECT creator_id, regime_accbal, regime_name, regime_type FROM regimes WHERE regime_id = $1",
+      [regimeId]
+    );
+
+    // regime creator details
+    const regimeCreatorDetails = await pool.query(
+      "SELECT client_name, client_email FROM clients WHERE client_id = $1",
+      [regimeId.rows[0].creator_id]
+    );
+
+    // gets client accBal just incase
+    const clientDetails = await pool.query(
+      "SELECT client_accbal FROM clients WHERE client_id = $1",
+      [userId]
+    );
+
+    // response if transaction already exists
+    if (transactionExistence.rows.length !== 0)
+      return res.status(400).json(`transaction has been verified already`);
+
+    // gets the amount for the ticket and the id for that pricing
+    const pricingAmount = await pool.query(
+      "SELECT pricing_amount, pricing_id, pricing_name FROM pricings WHERE pricing_id = $1",
+      [pricingId]
+    );
+
     // verifies the transaction on paystack
     const response = await axios({
       method: "get",
@@ -50,21 +129,20 @@ exports.purchaseVerifier = async (req, res) => {
       },
     });
 
-    // gets the amount for the ticket and the id for that pricing
-    const pricingAmount = await pool.query(
-      "SELECT pricing_amount, pricing_id FROM pricings WHERE pricing_id = $1",
-      [pricingId]
-    );
-
     // converts it to naira
     const amount = Number(response.data.data.amount) / 100;
+
+    const ticketPrice = Number(pricingAmount.rows[0].pricing_amount);
+
+    // gets the number of tickets purchased
+    let numberOfTickets = amount / ticketPrice;
 
     // gets the remainder of the division of the amount paid by the actual ticket amount
     const remainderChecker =
       amount % Number(pricingAmount.rows[0].pricing_amount);
 
     // function to run if it has a remainder
-    if (remainderChecker !== 0) {
+    if (amount < ticketPrice) {
       await pool.query(
         "INSERT INTO transactions(transaction_id, client_id, regime_id, pricing_id, reference_number, amount, transaction_status, transaction_description, transaction_date, transaction_time) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *",
         [
@@ -84,9 +162,6 @@ exports.purchaseVerifier = async (req, res) => {
     }
 
     // steps to handle if it does not have a remainder
-
-    // gets the number of tickets purchased
-    let numberOfTickets = amount / Number(pricingAmount.rows[0].pricing_amount);
 
     // saves the transaction in the database
     const transaction = await pool.query(
@@ -116,7 +191,7 @@ exports.purchaseVerifier = async (req, res) => {
             transaction.rows[0].transaction_id,
             userId,
             userId,
-            Number(pricingAmount.rows[0].pricing_amount),
+            ticketPrice,
             status.toLowerCase(),
             affiliate,
             dayjs().format("YYYY-MM-DD"),
@@ -125,7 +200,116 @@ exports.purchaseVerifier = async (req, res) => {
         );
       }
     }
-    return res.status(200).json(response.data.data);
+
+    const regimeTypePercent = await percentages(
+      regimeDetails.rows[0].regime_type
+    );
+
+    const clientReminantMoney = amount - ticketPrice * numberOfTickets;
+
+    const moneyTotal = ticketPrice * numberOfTickets;
+
+    const charge = (moneyTotal * regimeTypePercent) / 100;
+
+    // handles regime balance update
+    const regimeProfit = moneyTotal - charge;
+    const regimeFormerBal = Number(regimeDetails.rows[0].regime_accbal);
+    const regimeNewBal = regimeFormerBal + regimeProfit;
+
+    // handles company balance update
+    const compFormerBal = await companyCurrentBal();
+    const companyNewBal = Number(charge + compFormerBal);
+
+    // handles clients balance update
+    const clientFormerBal = await clientCurrentBal();
+    const clientNewBal = Number(clientFormerBal + clientReminantMoney);
+
+    const regimeTopUp = await pool.query(
+      "UPDATE regimes WHERE regime_id = $1 SET regime_accbal = $2 RETURNING *",
+      [regimeNewBal]
+    );
+    const companyTopUp = await pool.query(
+      "UPDATE company WHERE company_id = $1 SET company_accbal = $2 RETURNING *",
+      [companyNewBal]
+    );
+    const clientTopUp = await pool.query(
+      "UPDATE clients WHERE client_id = $1 SET client_accbal = $2 RETURNING *",
+      [clientNewBal]
+    );
+
+    //credentials for email transportation
+    const transport = nodemailer.createTransport({
+      host: "smtp.office365.com",
+      post: 587,
+      auth: {
+        user: "reventlifyhub@outlook.com",
+        pass: process.env.MAIL,
+      },
+    });
+
+    //ticket purchaser alert
+    const msg = {
+      from: "Reventlify <reventlifyhub@outlook.com>", // sender address
+      to: userEmail, // list of receivers
+      subject: "Ticket Purchase", // Subject line
+      text: `Congrats ${capNsmalz.neat(
+        userName
+      )} you just successfully purchased ${numberOfTickets} ${regimeDetails.rows[0].regime_name.toUpperCase()} ${pricingAmount.rows[0].pricing_name.toLowerCase()} ticket${(numberOfTickets =
+        1 ? "" : "s")}.`, // plain text body
+      html: `<h1>Newly Registered Client</h1>
+      <p>Congrats ${capNsmalz.neat(
+        userName
+      )} you just successfully purchased ${numberOfTickets} <strong>${regimeDetails.rows[0].regime_name.toUpperCase()}</strong> ${pricingAmount.rows[0].pricing_name.toLowerCase()} ticket${(numberOfTickets =
+        1 ? "" : "s")}.</p>`, //HTML message
+    };
+
+    //regime creator alert
+    const msg1 = {
+      from: "Reventlify <reventlifyhub@outlook.com>", // sender address
+      to: regimeCreatorDetails.rows[0].client_email, // list of receivers
+      subject: "Ticket Purchase", // Subject line
+      text: `Congrats ${capNsmalz.neat(
+        regimeCreatorDetails.rows[0].client_name
+      )}, ${userName} just successfully purchased ${numberOfTickets} ${pricingAmount.rows[0].pricing_name.toLowerCase()} ticket${(numberOfTickets =
+        1
+          ? ""
+          : "s")} for your ${regimeDetails.rows[0].regime_name.toUpperCase()} regime.`, // plain text body
+      html: `<h1>Newly Registered Client</h1>
+      <p>Congrats ${capNsmalz.neat(
+        regimeCreatorDetails.rows[0].client_name
+      )},  ${userName} just successfully purchased ${numberOfTickets} ${pricingAmount.rows[0].pricing_name.toLowerCase()} ticket${(numberOfTickets =
+        1
+          ? ""
+          : "s")} for your <strong>${regimeDetails.rows[0].regime_name.toUpperCase()}</strong> regime.</p>`, //HTML message
+    };
+
+    //company alert
+    const msg2 = {
+      from: "Reventlify <reventlifyhub@outlook.com>", // sender address
+      to: "edijay17@gmail.com", // list of receivers
+      subject: "Ticket Purchase", // Subject line
+      text: `Congrats, ${userName} just successfully purchased ${numberOfTickets} ${pricingAmount.rows[0].pricing_name.toLowerCase()} ticket${(numberOfTickets =
+        1
+          ? ""
+          : "s")} for ${regimeDetails.rows[0].regime_name.toUpperCase()} regimee and your current balance is ${
+        companyTopUp.rows[0].company_accbal
+      }.`, // plain text body
+      html: `<h1>Newly Registered Client</h1>
+      <p>Congrats, ${userName} just successfully purchased ${numberOfTickets} ${pricingAmount.rows[0].pricing_name.toLowerCase()} ticket${(numberOfTickets =
+        1
+          ? ""
+          : "s")} for <strong>${regimeDetails.rows[0].regime_name.toUpperCase()}</strong> regime and your current balance is ${
+        companyTopUp.rows[0].company_accbal
+      }.</p>`, //HTML message
+    };
+
+    // send mail with defined transport object
+    await transport.sendMail(msg);
+    await transport.sendMail(msg1);
+    await transport.sendMail(msg2);
+
+    // final response
+    return res.status(200).json("successful");
   } catch (error) {
     // Handle any errors that occur during the request
     console.error(error);

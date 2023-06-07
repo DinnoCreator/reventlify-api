@@ -13,7 +13,7 @@ exports.pricingQueryOnline = async (req, res) => {
     // returns it to the client
     return res.status(200).json({ eventPricings: eventPricings });
   } catch (error) {
-    return res.status(418).json(error);
+    return res.status(500).json(error.message);
   }
 };
 
@@ -30,6 +30,6 @@ exports.pricingQueryOffline = async (req, res) => {
     // returns it to the client
     return res.status(200).json({ eventPricings: eventPricings });
   } catch (error) {
-    return res.status(418).json(error);
+    return res.status(500).json(error.message);
   }
 };

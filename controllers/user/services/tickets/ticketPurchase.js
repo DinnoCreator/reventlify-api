@@ -13,6 +13,7 @@ const {
   clientCurrentBal,
 } = require("../../../../utilities/percentagesAndBalance");
 exports.ticketsPurchase = async (req, res) => {
+  const userId = req.user;
   // request body from the clients
   const { email, amount, pricingId } = req.body;
   try {

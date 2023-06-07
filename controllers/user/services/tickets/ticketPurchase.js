@@ -83,7 +83,7 @@ exports.purchaseVerifier = async (req, res) => {
   const userId = req.user;
   try {
     // request params from the client side
-    const { reference, status, regimeId, pricingId, affiliate } = req.body;
+    const { reference, regimeId, pricingId, affiliate } = req.body;
 
     // checks if transaction already exists in the database
     const transactionExistence = await pool.query(
@@ -153,7 +153,7 @@ exports.purchaseVerifier = async (req, res) => {
           pricingId,
           reference,
           Number(amount),
-          status.toLowerCase(),
+          response.data.data.status.toLowerCase(),
           "amount does not match pricing",
           dayjs().format("YYYY-MM-DD"),
           dayjs().format("HH:mm:ss"),
@@ -174,7 +174,7 @@ exports.purchaseVerifier = async (req, res) => {
         pricingId,
         reference,
         Number(amount),
-        status.toLowerCase(),
+        response.data.data.status.toLowerCase(),
         "amount matches pricing",
         dayjs().format("YYYY-MM-DD"),
         dayjs().format("HH:mm:ss"),
@@ -193,7 +193,7 @@ exports.purchaseVerifier = async (req, res) => {
             userId,
             userId,
             ticketPrice,
-            status.toLowerCase(),
+            response.data.data.status.toLowerCase(),
             affiliate,
             dayjs().format("YYYY-MM-DD"),
             dayjs().format("HH:mm:ss"),

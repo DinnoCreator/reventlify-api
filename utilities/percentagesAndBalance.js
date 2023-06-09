@@ -5,7 +5,7 @@ exports.percentages = async (regimeType) => {
   try {
     // company details
     const companyDetails = await pool.query(
-      "SELECT company_accbal, theatre_percentage, concert_percentage, service_percentage, conference_percentage, pageantry_percentage, education_percentage, carnival_percentage, festival_percentage, party_percentage, sport_percentage, talentshow_percentage, FROM company WHERE company_id = $1",
+      "SELECT company_accbal, theatre_percentage, concert_percentage, service_percentage, conference_percentage, pageantry_percentage, education_percentage, carnival_percentage, festival_percentage, party_percentage, sport_percentage, talentshow_percentage FROM company WHERE company_id = $1",
       [process.env.COMPANY_ID]
     );
 
@@ -43,7 +43,7 @@ exports.companyCurrentBal = async () => {
   try {
     // company details
     const companyDetails = await pool.query(
-      "SELECT company_accbal, theatre_percentage, concert_percentage, service_percentage, conference_percentage, pageantry_percentage, education_percentage, carnival_percentage, festival_percentage, party_percentage, sport_percentage, talentshow_percentage, FROM company WHERE company_id = $1",
+      "SELECT company_accbal, theatre_percentage, concert_percentage, service_percentage, conference_percentage, pageantry_percentage, education_percentage, carnival_percentage, festival_percentage, party_percentage, sport_percentage, talentshow_percentage FROM company WHERE company_id = $1",
       [process.env.COMPANY_ID]
     );
 

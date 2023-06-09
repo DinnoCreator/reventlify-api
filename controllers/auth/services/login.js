@@ -30,7 +30,7 @@ exports.logger = async (req, res) => {
       { user_id, user_name, user_email },
       process.env.ACCESS_TOKEN_SECRET,
       {
-        expiresIn: "25m",
+        expiresIn: "55m",
       }
     );
     return res.status(200).json({

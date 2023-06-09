@@ -1,3 +1,4 @@
+// dependencies
 const axios = require("axios");
 const pool = require("../../../../db");
 const nodemailer = require("nodemailer");
@@ -12,6 +13,8 @@ const {
   companyCurrentBal,
   clientCurrentBal,
 } = require("../../../../utilities/percentagesAndBalance");
+
+// ticket purchase service
 exports.ticketsPurchase = async (req, res) => {
   const userId = req.user;
   // request body from the clients
@@ -77,6 +80,7 @@ exports.ticketsPurchase = async (req, res) => {
   }
 };
 
+// purchase verifier service
 exports.purchaseVerifier = async (req, res) => {
   const userEmail = req.email;
   const userName = req.name;
@@ -115,7 +119,7 @@ exports.purchaseVerifier = async (req, res) => {
 
     // gets the amount for the ticket and the id for that pricing
     const pricingAmount = await pool.query(
-      "SELECT pricing_amount, pricing_id, pricing_name FROM pricings WHERE pricing_id = $1",
+      "SELECT pricing_amount, pricing_id, pricing_name, pricing_affiliate_amount FROM pricings WHERE pricing_id = $1",
       [pricingId]
     );
 
@@ -130,6 +134,11 @@ exports.purchaseVerifier = async (req, res) => {
       },
     });
 
+    if (
+      response.data.data.status.toLowerCase() !== "success" &&
+      response.data.data.status.toLowerCase() !== "declined"
+    )
+      return res.status(400).json("The transaction was not completed");
     // converts it to naira
     const amount = Number(response.data.data.amount) / 100;
 
@@ -145,9 +154,10 @@ exports.purchaseVerifier = async (req, res) => {
     // function to run if it has a remainder
     if (amount < ticketPrice) {
       await pool.query(
-        "INSERT INTO transactions(transaction_id, client_id, regime_id, pricing_id, reference_number, amount, transaction_status, transaction_description, transaction_date, transaction_time) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *",
+        "INSERT INTO transactions(transaction_id, transaction_type, client_id, regime_id, pricing_id, reference_number, amount, transaction_status, transaction_description, transaction_date, transaction_time) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *",
         [
           await transactionID(),
+          "purchase",
           userId,
           regimeId,
           pricingId,
@@ -161,14 +171,34 @@ exports.purchaseVerifier = async (req, res) => {
       );
       return res.status(400).json("amount does not match pricing");
     }
+    if (response.data.data.status.toLowerCase() === "declined") {
+      await pool.query(
+        "INSERT INTO transactions(transaction_id, transaction_type, client_id, regime_id, pricing_id, reference_number, amount, transaction_status, transaction_description, transaction_date, transaction_time) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *",
+        [
+          await transactionID(),
+          "purchase",
+          userId,
+          regimeId,
+          pricingId,
+          reference,
+          Number(amount),
+          response.data.data.status.toLowerCase(),
+          "transaction declined",
+          dayjs().format("YYYY-MM-DD"),
+          dayjs().format("HH:mm:ss"),
+        ]
+      );
+      return res.status(400).json("transaction declined");
+    }
 
     // steps to handle if it does not have a remainder
 
     // saves the transaction in the database
     const transaction = await pool.query(
-      "INSERT INTO transactions(transaction_id, client_id, regime_id, pricing_id, reference_number, amount, transaction_status, transaction_description, transaction_date, transaction_time) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *",
+      "INSERT INTO transactions(transaction_id, transaction_type, client_id, regime_id, pricing_id, reference_number, amount, transaction_status, transaction_description, transaction_date, transaction_time) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *",
       [
         await transactionID(),
+        "purchase",
         userId,
         regimeId,
         pricingId,
@@ -181,6 +211,9 @@ exports.purchaseVerifier = async (req, res) => {
       ]
     );
 
+    const affiliateChecker = (affiliate) => {
+      affiliate === "none" ? null : affiliate;
+    };
     // loop to create the number of tickets purchased in the database
     for (let i = 1; i <= numberOfTickets; i++) {
       if (i <= 10) {
@@ -194,7 +227,7 @@ exports.purchaseVerifier = async (req, res) => {
             userId,
             ticketPrice,
             response.data.data.status.toLowerCase(),
-            affiliate,
+            affiliateChecker(affiliate),
             dayjs().format("YYYY-MM-DD"),
             dayjs().format("HH:mm:ss"),
           ]
@@ -205,6 +238,8 @@ exports.purchaseVerifier = async (req, res) => {
     const regimeTypePercent = await percentages(
       regimeDetails.rows[0].regime_type
     );
+
+    console.log(`regimePercentage: ${regimeTypePercent}`);
 
     const clientReminantMoney = amount - ticketPrice * numberOfTickets;
 
@@ -220,24 +255,44 @@ exports.purchaseVerifier = async (req, res) => {
     // handles company balance update
     const compFormerBal = await companyCurrentBal();
     const companyNewBal = Number(charge + compFormerBal);
+    console.log(`companyBal: ${compFormerBal}`);
 
     // handles clients balance update
-    const clientFormerBal = await clientCurrentBal();
+    const clientFormerBal = await clientCurrentBal(userId);
     const clientNewBal = Number(clientFormerBal + clientReminantMoney);
+    console.log(`clientFormerBal: ${clientFormerBal}`);
+
+    // handles clients balance update
+    const affiliateFormerBal = await clientCurrentBal(userId);
+    const affiliateNewBal = Number(
+      affiliateFormerBal + pricingAmount.rows[0].pricing_affiliate_amount
+    );
+    console.log(`affiliateFormerBal: ${affiliateFormerBal}`);
 
     const regimeTopUp = await pool.query(
-      "UPDATE regimes WHERE regime_id = $1 SET regime_accbal = $2 RETURNING *",
-      [regimeNewBal]
+      "UPDATE regimes SET regime_accbal = $1 WHERE regime_id = $2 RETURNING *",
+      [regimeNewBal, regimeId]
     );
+    console.log(regimeTopUp.rows);
     const companyTopUp = await pool.query(
-      "UPDATE company WHERE company_id = $1 SET company_accbal = $2 RETURNING *",
-      [companyNewBal]
+      "UPDATE company SET company_accbal = $1 WHERE company_id = $2 RETURNING *",
+      [companyNewBal, process.env.COMPANY_ID]
     );
     const clientTopUp = await pool.query(
-      "UPDATE clients WHERE client_id = $1 SET client_accbal = $2 RETURNING *",
-      [clientNewBal]
+      "UPDATE clients SET client_accbal = $1 WHERE client_id = $2 RETURNING *",
+      [clientNewBal, userId]
     );
 
+    const affiliateCrediter = async () => {
+      if (affiliate !== "none") {
+        await pool.query(
+          "UPDATE clients WHERE client_id = $1 SET client_accbal = $2 RETURNING *",
+          [affiliate, affiliateNewBal]
+        );
+      }
+    };
+
+    await affiliateCrediter();
     //credentials for email transportation
     const transport = nodemailer.createTransport({
       host: "smtp.office365.com",
@@ -255,13 +310,15 @@ exports.purchaseVerifier = async (req, res) => {
       subject: "Ticket Purchase", // Subject line
       text: `Congrats ${capNsmalz.neat(
         userName
-      )} you just successfully purchased ${numberOfTickets} ${regimeDetails.rows[0].regime_name.toUpperCase()} ${pricingAmount.rows[0].pricing_name.toLowerCase()} ticket${(numberOfTickets =
-        1 ? "" : "s")}.`, // plain text body
-      html: `<h1>Newly Registered Client</h1>
+      )} you just successfully purchased ${numberOfTickets} ${regimeDetails.rows[0].regime_name.toUpperCase()} ${pricingAmount.rows[0].pricing_name.toLowerCase()} ticket${
+        numberOfTickets === 1 ? "" : "s"
+      }.`, // plain text body
+      html: `<h1>Ticket Purchase</h1>
       <p>Congrats ${capNsmalz.neat(
         userName
-      )} you just successfully purchased ${numberOfTickets} <strong>${regimeDetails.rows[0].regime_name.toUpperCase()}</strong> ${pricingAmount.rows[0].pricing_name.toLowerCase()} ticket${(numberOfTickets =
-        1 ? "" : "s")}.</p>`, //HTML message
+      )} you just successfully purchased ${numberOfTickets} <strong>${regimeDetails.rows[0].regime_name.toUpperCase()}</strong> ${pricingAmount.rows[0].pricing_name.toLowerCase()} ticket${
+        numberOfTickets === 1 ? "" : "s"
+      }.</p>`, //HTML message
     };
 
     //regime creator alert
@@ -271,17 +328,19 @@ exports.purchaseVerifier = async (req, res) => {
       subject: "Ticket Purchase", // Subject line
       text: `Congrats ${capNsmalz.neat(
         regimeCreatorDetails.rows[0].client_name
-      )}, ${userName} just successfully purchased ${numberOfTickets} ${pricingAmount.rows[0].pricing_name.toLowerCase()} ticket${(numberOfTickets =
-        1
-          ? ""
-          : "s")} for your ${regimeDetails.rows[0].regime_name.toUpperCase()} regime.`, // plain text body
-      html: `<h1>Newly Registered Client</h1>
+      )}, ${capNsmalz.neat(
+        userName
+      )} just successfully purchased ${numberOfTickets} ${pricingAmount.rows[0].pricing_name.toLowerCase()} ticket${
+        numberOfTickets === 1 ? "" : "s"
+      } for your ${regimeDetails.rows[0].regime_name.toUpperCase()} regime.`, // plain text body
+      html: `<h1>Ticket Purchase</h1>
       <p>Congrats ${capNsmalz.neat(
         regimeCreatorDetails.rows[0].client_name
-      )},  ${userName} just successfully purchased ${numberOfTickets} ${pricingAmount.rows[0].pricing_name.toLowerCase()} ticket${(numberOfTickets =
-        1
-          ? ""
-          : "s")} for your <strong>${regimeDetails.rows[0].regime_name.toUpperCase()}</strong> regime.</p>`, //HTML message
+      )},  ${capNsmalz.neat(
+        userName
+      )} just successfully purchased ${numberOfTickets} ${pricingAmount.rows[0].pricing_name.toLowerCase()} ticket${
+        numberOfTickets === 1 ? "" : "s"
+      } for your <strong>${regimeDetails.rows[0].regime_name.toUpperCase()}</strong> regime.</p>`, //HTML message
     };
 
     //company alert
@@ -289,17 +348,19 @@ exports.purchaseVerifier = async (req, res) => {
       from: "Reventlify <reventlifyhub@outlook.com>", // sender address
       to: "edijay17@gmail.com", // list of receivers
       subject: "Ticket Purchase", // Subject line
-      text: `Congrats, ${userName} just successfully purchased ${numberOfTickets} ${pricingAmount.rows[0].pricing_name.toLowerCase()} ticket${(numberOfTickets =
-        1
-          ? ""
-          : "s")} for ${regimeDetails.rows[0].regime_name.toUpperCase()} regimee and your current balance is ${
+      text: `Congrats, ${capNsmalz.neat(
+        userName
+      )} just successfully purchased ${numberOfTickets} ${pricingAmount.rows[0].pricing_name.toLowerCase()} ticket${
+        numberOfTickets === 1 ? "" : "s"
+      } for ${regimeDetails.rows[0].regime_name.toUpperCase()} regimee and your current balance is ${
         companyTopUp.rows[0].company_accbal
       }.`, // plain text body
-      html: `<h1>Newly Registered Client</h1>
-      <p>Congrats, ${userName} just successfully purchased ${numberOfTickets} ${pricingAmount.rows[0].pricing_name.toLowerCase()} ticket${(numberOfTickets =
-        1
-          ? ""
-          : "s")} for <strong>${regimeDetails.rows[0].regime_name.toUpperCase()}</strong> regime and your current balance is ${
+      html: `<h1>Ticket Purchase</h1>
+      <p>Congrats, ${capNsmalz.neat(
+        userName
+      )} just successfully purchased ${numberOfTickets} ${pricingAmount.rows[0].pricing_name.toLowerCase()} ticket${
+        numberOfTickets === 1 ? "" : "s"
+      } for <strong>${regimeDetails.rows[0].regime_name.toUpperCase()}</strong> regime and your current balance is ${
         companyTopUp.rows[0].company_accbal
       }.</p>`, //HTML message
     };

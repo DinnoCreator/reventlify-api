@@ -113,6 +113,7 @@ CREATE TABLE preference (
 );
 CREATE TABLE transactions (
     transaction_id TEXT NOT NULL UNIQUE, 
+    transaction_type TEXT NOT NULL, 
     client_id TEXT NOT NULL REFERENCES clients(client_id) ON DELETE CASCADE ON UPDATE CASCADE,
     regime_id TEXT NOT NULL REFERENCES regimes(regime_id) ON DELETE CASCADE ON UPDATE CASCADE,
     pricing_id TEXT NOT NULL REFERENCES pricings(pricing_id) ON DELETE CASCADE ON UPDATE CASCADE,

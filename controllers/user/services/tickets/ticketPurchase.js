@@ -100,7 +100,7 @@ exports.purchaseVerifier = async (req, res) => {
     // regime creator details
     const regimeCreatorDetails = await pool.query(
       "SELECT client_name, client_email FROM clients WHERE client_id = $1",
-      [regimeId.rows[0].creator_id]
+      [regimeDetails.rows[0].creator_id]
     );
 
     // gets client accBal just incase

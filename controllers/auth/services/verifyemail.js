@@ -34,22 +34,21 @@ exports.sendVerificationCode = async (req, res) => {
 
     //credentials for email transportation
     const transport = nodemailer.createTransport({
-      service: "hotmail",
-      secure: false, // use SSL
-      auth: {
-        user: "reventlifyhub@outlook.com",
-        pass: process.env.MAIL,
-      },
-      // host: "smtp.office365.com",
-      // secure: true, // use SSL
-      // post: 587,
+      // service: "Hotmail",
+      // secure: false, // use SSL
       // auth: {
       //   user: "reventlifyhub@outlook.com",
       //   pass: process.env.MAIL,
       // },
-      tls: {
-        rejectUnauthorized: false,
+      host: "smtp.office365.com",
+      post: 587,
+      auth: {
+        user: "reventlifyhub@outlook.com",
+        pass: process.env.MAIL,
       },
+      // tls: {
+      //   rejectUnauthorized: false,
+      // },
     });
 
     //sends verification code to clients mail

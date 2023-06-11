@@ -106,7 +106,7 @@ exports.paystackWebhook = async (req, res) => {
       .createHmac("sha512", secret)
       .update(JSON.stringify(req.body))
       .digest("hex");
-    if (hash == req.headers["x-paystack-signature"]) res.sendStatus(200);
+    if (hash == req.headers["x-paystack-signature"]){
     // Retrieve the request's body
     const event = req.body;
 
@@ -396,7 +396,7 @@ exports.paystackWebhook = async (req, res) => {
 
     console.log(event.data);
     // final response
-    return res.status(200);
+    return res.status(200);}
   } catch (error) {
     return;
   }

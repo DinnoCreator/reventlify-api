@@ -34,7 +34,7 @@ exports.sendVerificationCode = async (req, res) => {
 
     //credentials for email transportation
     const transport = nodemailer.createTransport({
-      service: "Hotmail",
+      service: "hotmail",
       secure: false, // use SSL
       auth: {
         user: "reventlifyhub@outlook.com",

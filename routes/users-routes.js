@@ -39,7 +39,7 @@ router.get("/pricingsoffline", users.pricingsOffline);
 router.post("/buyticket", authenticateToken, users.purchaseInitializer);
 
 // ticket purchase webhook
-router.post("/purchaseverify", users.purchaseWebHook);
+router.post("/paystackwebhook", users.purchaseWebHook);
 
 // ticket purchase verifier
 router.post("/purchaseverify", users.purchaseVerifier);

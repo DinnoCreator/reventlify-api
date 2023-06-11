@@ -64,7 +64,8 @@ exports.ticketsPurchase = async (req, res) => {
         data: {
           regimeId: regimeId,
           pricingId: pricingId,
-          affiliateId: affiliate
+          affiliateId: affiliate,
+          buyerId: userId
         },
       },
     });
@@ -401,18 +402,16 @@ exports.paystackWebhook = async (req, res) => {
       const event = req.body;
       const response = await axios({
         method: "post",
-        url: "http://localhost:5000/purchaseverify",
+        url: "https://api-reventlify.onrender.com/purchaseverify",
         data: event,
         headers: {
-          authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`,
           "content-type": "application/json",
           "cache-control": "no-cache",
         },
       });
-      console.log(event);
+      return res.status(response.status);
       // Do something with event
     }
-    return;
   } catch (error) {
     return;
   }

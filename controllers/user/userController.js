@@ -29,8 +29,11 @@ exports.pricingsOnline = v.pricingQueryOnline;
 // queries pricings offline
 exports.pricingsOffline = v.pricingQueryOffline;
 
-// queries pricings offline
+// ticket purchase
 exports.purchaseInitializer = vi.ticketsPurchase;
 
-// queries pricings offline
+// ticket purchase verifier
+exports.purchaseWebHook = vi.paystackWebhook;
+
+// ticket purchase verifier2
 exports.purchaseVerifier = vi.purchaseVerifier;

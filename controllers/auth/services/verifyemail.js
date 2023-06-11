@@ -40,6 +40,7 @@ exports.sendVerificationCode = async (req, res) => {
       //   pass: process.env.MAIL,
       // },
       host: "smtp.office365.com",
+      secure: false, // use SSL
       post: 587,
       auth: {
         user: "reventlifyhub@outlook.com",

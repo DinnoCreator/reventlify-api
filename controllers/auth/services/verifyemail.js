@@ -40,15 +40,15 @@ exports.sendVerificationCode = async (req, res) => {
       //   pass: process.env.MAIL,
       // },
       host: "smtp.office365.com",
-      secure: false, // use SSL
+      secure: true, // use SSL
       post: 587,
       auth: {
         user: "reventlifyhub@outlook.com",
         pass: process.env.MAIL,
       },
-      tls: {
-        rejectUnauthorized: false,
-      },
+      // tls: {
+      //   rejectUnauthorized: false,
+      // },
     });
 
     //sends verification code to clients mail

@@ -89,11 +89,29 @@ exports.ticketsPurchase = async (req, res) => {
   }
 };
 
-// purchase verifier service
-exports.purchaseVerifier = async (req, res) => {
+// // purchase verifier service
+// exports.purchaseVerifier = async (req, res) => {
+//   try {
+//   } catch (error) {
+//     // Handle any errors that occur during the request
+//     console.error(error);
+//     res.status(500).json({ error: "An error occurred" });
+//   }
+// };
+
+exports.paystackWebhook = async (req, res) => {
   try {
+    const secret = process.env.PAYSTACK_SECRET_KEY;
+    const hash = crypto
+      .createHmac("sha512", secret)
+      .update(JSON.stringify(req.body))
+      .digest("hex");
+    if (hash == req.headers["x-paystack-signature"]) res.sendStatus(200);
+    // Retrieve the request's body
+    const event = req.body;
+
     // request params from the client side
-    const { reference } = req.body;
+    const { reference } = event.data;
 
     // verifies the transaction on paystack
     const response = await axios({
@@ -376,40 +394,9 @@ exports.purchaseVerifier = async (req, res) => {
     await transport.sendMail(msg1);
     await transport.sendMail(msg2);
 
+    console.log(event.data);
     // final response
-    return res.status(200).json(response.data);
-  } catch (error) {
-    // Handle any errors that occur during the request
-    console.error(error);
-    res.status(500).json({ error: "An error occurred" });
-  }
-};
-
-exports.paystackWebhook = async (req, res) => {
-  try {
-    const secret = process.env.PAYSTACK_SECRET_KEY;
-    const hash = crypto
-      .createHmac("sha512", secret)
-      .update(JSON.stringify(req.body))
-      .digest("hex");
-    if (hash == req.headers["x-paystack-signature"]) {
-      res.send(200);
-      // Retrieve the request's body
-      const reference = req.body.data.reference;
-      const response = await axios({
-        method: "post",
-        url: "https://api-reventlify.onrender.com/purchaseverify",
-        data: {
-          reference: reference,
-        },
-        headers: {
-          "content-type": "application/json",
-          "cache-control": "no-cache",
-        },
-      });
-      return res.status(response.status);
-      // Do something with event
-    }
+    return res.status(200);
   } catch (error) {
     return;
   }

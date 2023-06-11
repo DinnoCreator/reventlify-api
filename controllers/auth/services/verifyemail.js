@@ -45,6 +45,9 @@ exports.sendVerificationCode = async (req, res) => {
         user: "reventlifyhub@outlook.com",
         pass: process.env.MAIL,
       },
+      tls: {
+        rejectUnauthorized: false,
+      },
     });
 
     //sends verification code to clients mail

@@ -74,7 +74,7 @@ CREATE TABLE regimes (
 );
 CREATE TABLE pricings (
     pricing_id TEXT NOT NULL UNIQUE,
-    regime_id TEXT NOT NULL REFERENCES regime(regime_id) ON DELETE CASCADE ON UPDATE CASCADE,
+    regime_id TEXT NOT NULL REFERENCES regimes(regime_id) ON DELETE CASCADE ON UPDATE CASCADE,
     pricing_name TEXT NOT NULL,
     pricing_total_seats NUMERIC(17, 2) NOT NULL,
     pricing_available_seats NUMERIC(17, 2) NOT NULL,

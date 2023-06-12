@@ -233,7 +233,11 @@ exports.paystackWebhook = async (req, res) => {
       );
 
       const affiliateChecker = (affiliate) => {
-        affiliate === "none" ? null : affiliate;
+        if (affiliate === "none") {
+          return null;
+        } else {
+          return affiliate;
+        }
       };
       // loop to create the number of tickets purchased in the database
       for (let i = 1; i <= numberOfTickets; i++) {

@@ -393,7 +393,6 @@ exports.paystackWebhook = async (req, res) => {
       await transport.sendMail(msg1);
       await transport.sendMail(msg2);
 
-      console.log(event.data);
       // final response
       return res.status(200);
     }

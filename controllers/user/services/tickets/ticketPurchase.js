@@ -317,8 +317,8 @@ exports.paystackWebhook = async (req, res) => {
       const affiliateCrediter = async () => {
         if (affiliatelog !== "none") {
           return await pool.query(
-            "UPDATE clients WHERE client_id = $1 SET client_accbal = $2 RETURNING *",
-            [affiliatelog, affiliateNewBal]
+            "UPDATE clients SET client_accbal = $1  WHERE client_id = $2 RETURNING *",
+            [affiliateNewBal, affiliatelog]
           );
         }
       };

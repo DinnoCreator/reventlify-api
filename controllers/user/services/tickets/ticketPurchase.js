@@ -240,6 +240,9 @@ exports.paystackWebhook = async (req, res) => {
           return affiliate;
         }
       };
+
+      const affiliatelog = await affiliateChecker(affiliate);
+      console.log(affiliatelog);
       // loop to create the number of tickets purchased in the database
       for (let i = 1; i <= numberOfTickets; i++) {
         if (i <= 10) {
@@ -313,7 +316,7 @@ exports.paystackWebhook = async (req, res) => {
 
       const affiliateCrediter = async () => {
         if (affiliate !== "none") {
-          await pool.query(
+          return await pool.query(
             "UPDATE clients WHERE client_id = $1 SET client_accbal = $2 RETURNING *",
             [affiliate, affiliateNewBal]
           );

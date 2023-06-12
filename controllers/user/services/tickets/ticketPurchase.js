@@ -233,7 +233,7 @@ exports.paystackWebhook = async (req, res) => {
         ]
       );
 
-      const affiliateChecker = (affiliate) => {
+      let affiliateChecker = (affiliate) => {
         if (affiliate === "none") {
           return null;
         } else {
@@ -241,7 +241,7 @@ exports.paystackWebhook = async (req, res) => {
         }
       };
 
-      const affiliatelog = await affiliateChecker(affiliate);
+      const affiliatelog = affiliateChecker(affiliate);
       console.log(affiliatelog);
       // loop to create the number of tickets purchased in the database
       for (let i = 1; i <= numberOfTickets; i++) {
@@ -256,7 +256,7 @@ exports.paystackWebhook = async (req, res) => {
               userId,
               ticketPrice,
               event.data.status.toLowerCase(),
-              await affiliateChecker(affiliate),
+              affiliateChecker(affiliate),
               dayjs().format("YYYY-MM-DD"),
               dayjs().format("HH:mm:ss"),
             ]

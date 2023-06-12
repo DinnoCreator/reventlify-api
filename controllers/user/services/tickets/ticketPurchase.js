@@ -115,14 +115,15 @@ exports.paystackWebhook = async (req, res) => {
       .update(JSON.stringify(req.body))
       .digest("hex");
     if (hash == req.headers["x-paystack-signature"]) {
-      res.status(200);
+      // res.status(200);
       // Retrieve the request's body
       const event = req.body;
 
       // request params from the client side
       const { reference } = event.data;
-      const { userId, regimeId, pricingId, affiliate } = event.data.metadata.data;
-
+      const { buyerId, regimeId, pricingId, affiliate } = event.data.metadata.data;
+      
+      const userId = buyerId;
       // gets client accBal just incase
       const clientDetails = await pool.query(
         "SELECT client_accbal, client_name, client_email FROM clients WHERE client_id = $1",

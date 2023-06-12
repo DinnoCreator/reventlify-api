@@ -118,11 +118,11 @@ exports.paystackWebhook = async (req, res) => {
       // res.status(200);
       // Retrieve the request's body
       const event = req.body;
-      console.log(event);
 
       // request params from the client side
       const { reference } = event.data;
       const { userId, regimeId, pricingId, affiliate } = event.data.metadata;
+      console.log(event.data.metadata);
 
       // gets client accBal just incase
       const clientDetails = await pool.query(

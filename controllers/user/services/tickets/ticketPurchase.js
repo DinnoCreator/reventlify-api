@@ -118,6 +118,7 @@ exports.paystackWebhook = async (req, res) => {
       // res.status(200);
       // Retrieve the request's body
       const event = req.body;
+      console.log(event);
 
       // request params from the client side
       const { reference } = event.data;

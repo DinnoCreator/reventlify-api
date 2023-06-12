@@ -253,7 +253,7 @@ exports.paystackWebhook = async (req, res) => {
               userId,
               ticketPrice,
               event.data.status.toLowerCase(),
-              affiliateChecker(affiliate),
+              await affiliateChecker(affiliate),
               dayjs().format("YYYY-MM-DD"),
               dayjs().format("HH:mm:ss"),
             ]

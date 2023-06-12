@@ -121,8 +121,9 @@ exports.paystackWebhook = async (req, res) => {
 
       // request params from the client side
       const { reference } = event.data;
-      const { buyerId, regimeId, pricingId, affiliate } = event.data.metadata.data;
-      
+      const { buyerId, regimeId, pricingId, affiliateId } =
+        event.data.metadata.data;
+
       const userId = buyerId;
       // gets client accBal just incase
       const clientDetails = await pool.query(
@@ -233,15 +234,15 @@ exports.paystackWebhook = async (req, res) => {
         ]
       );
 
-      let affiliateChecker = (affiliate) => {
+      const affiliateChecker = (affiliate) => {
         if (affiliate === "none") {
           return null;
         } else {
-          return affiliate;
+          return `${affiliate}`;
         }
       };
 
-      const affiliatelog = affiliateChecker(affiliate);
+      const affiliatelog = affiliateChecker(affiliateId);
       console.log(affiliatelog);
       // loop to create the number of tickets purchased in the database
       for (let i = 1; i <= numberOfTickets; i++) {

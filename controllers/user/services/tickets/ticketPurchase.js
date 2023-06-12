@@ -97,16 +97,6 @@ exports.ticketsPurchase = async (req, res) => {
   }
 };
 
-// // purchase verifier service
-// exports.purchaseVerifier = async (req, res) => {
-//   try {
-//   } catch (error) {
-//     // Handle any errors that occur during the request
-//     console.error(error);
-//     res.status(500).json({ error: "An error occurred" });
-//   }
-// };
-
 exports.paystackWebhook = async (req, res) => {
   try {
     const secret = process.env.PAYSTACK_SECRET_KEY;
@@ -281,6 +271,15 @@ exports.paystackWebhook = async (req, res) => {
       const moneyTotal = ticketPrice * numberOfTickets;
 
       const charge = (moneyTotal * regimeTypePercent) / 100;
+      const paystackCharge = Number((moneyTotal * 1.5) / 100);
+
+      const chargeHandler = () => {
+        if (moneyTotal < 2500) {
+          return paystackCharge;
+        } else {
+          return Number(paystackCharge + 100);
+        }
+      };
 
       // handles regime balance update
       const regimeProfit = moneyTotal - charge;
@@ -289,7 +288,7 @@ exports.paystackWebhook = async (req, res) => {
 
       // handles company balance update
       const compFormerBal = await companyCurrentBal();
-      const companyNewBal = Number(charge + compFormerBal);
+      const companyNewBal = Number(chargeHandler() + compFormerBal);
 
       // handles clients balance update
       const clientFormerBal = await clientCurrentBal(userId);

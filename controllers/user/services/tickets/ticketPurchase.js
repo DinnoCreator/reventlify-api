@@ -89,7 +89,7 @@ exports.ticketsPurchase = async (req, res) => {
       },
     });
 
-    return res.status(200).json(event.data);
+    return res.status(200).json(response.data.data);
   } catch (error) {
     // Handle any errors that occur during the request
     console.error(error);

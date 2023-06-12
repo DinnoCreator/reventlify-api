@@ -281,6 +281,7 @@ exports.paystackWebhook = async (req, res) => {
         }
       };
       const trueCharge = chargeHandler();
+      const veryTrueCharge = charge - trueCharge;
 
       // handles regime balance update
       const regimeProfit = moneyTotal - charge;
@@ -289,14 +290,14 @@ exports.paystackWebhook = async (req, res) => {
 
       // handles company balance update
       const compFormerBal = await companyCurrentBal();
-      const companyNewBal = Number(trueCharge + compFormerBal);
+      const companyNewBal = Number(veryTrueCharge + compFormerBal);
 
       // handles clients balance update
       const clientFormerBal = await clientCurrentBal(userId);
       const clientNewBal = Number(clientFormerBal + clientReminantMoney);
 
       // handles clients balance update
-      const affiliateFormerBal = await clientCurrentBal(userId);
+      const affiliateFormerBal = await clientCurrentBal(affiliatelog);
       const affiliateNewBal = Number(
         affiliateFormerBal + pricingAmount.rows[0].pricing_affiliate_amount
       );

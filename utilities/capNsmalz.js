@@ -20,6 +20,7 @@ exports.neatCapz = function (yourName) {
   return newChar;
 };
 
+//  regime id prefix helper
 exports.regimeTypePrefix = (regimeType) => {
   if (regimeType.toLowerCase() === "concert") {
     return "CT";

@@ -23,13 +23,13 @@ exports.ticketsPurchase = async (req, res) => {
   try {
     // gets the amount for the ticket and the id for that pricing
     const pricingAmount = await pool.query(
-      "SELECT pricing_amount, pricing_id FROM pricings WHERE pricing_id = $1",
+      "SELECT pricing_amount, pricing_id, pricing_name FROM pricings WHERE pricing_id = $1",
       [pricingId]
     );
-    // gets the amount for the ticket and the id for that pricing
+    // gets the number of tickets for that regime pricing owned by the client
     const ticketsBought = await pool.query(
-      "SELECT ticket_buyer_id, ticket_id FROM tickets WHERE ticket_buyer_id = $1",
-      [userId]
+      "SELECT ticket_id FROM tickets WHERE ticket_buyer_id = $1 or ticket_owner_id = $2 AND pricing_id = $3",
+      [userId, userId, pricingId]
     );
 
     const ticketPrice = Number(pricingAmount.rows[0].pricing_amount);
@@ -39,13 +39,15 @@ exports.ticketsPurchase = async (req, res) => {
 
     // gets the remainder of the division of the amount paid by the actual ticket amount
     const remainderChecker =
-      amount % Number(pricingAmount.rows[0].pricing_amount);
+      Number(amount) % Number(pricingAmount.rows[0].pricing_amount);
 
-    // checks if user has purchased up to 10 tickets
+    // checks if user has purchased up to 10 tickets for that regime pricing
     if (ticketsBought.rows.length === 10)
       return res
         .status(400)
-        .json(`You have reached the ticket purchase limit(10) for this event.`);
+        .json(
+          `You have reached the ticket purchase limit(10) for ${pricingAmount.rows[0].pricing_name} tickets in this event.`
+        );
 
     // checks if user is trying to pay less than the price for the ticket
     if (amountNumber < ticketPrice)
@@ -293,10 +295,6 @@ exports.paystackWebhook = async (req, res) => {
       const companyNewBal = Number(veryTrueCharge + compFormerBal);
 
       // handles clients balance update
-      const clientFormerBal = await clientCurrentBal(userId);
-      const clientNewBal = Number(clientFormerBal + clientReminantMoney);
-
-      // handles clients balance update
       const affiliateFormerBal = await clientCurrentBal(affiliatelog);
       const affiliateNewBal = Number(
         affiliateFormerBal + pricingAmount.rows[0].pricing_affiliate_amount
@@ -309,10 +307,6 @@ exports.paystackWebhook = async (req, res) => {
       const companyTopUp = await pool.query(
         "UPDATE company SET company_accbal = $1 WHERE company_id = $2 RETURNING *",
         [companyNewBal, process.env.COMPANY_ID]
-      );
-      const clientTopUp = await pool.query(
-        "UPDATE clients SET client_accbal = $1 WHERE client_id = $2 RETURNING *",
-        [clientNewBal, userId]
       );
 
       const affiliateCrediter = async () => {

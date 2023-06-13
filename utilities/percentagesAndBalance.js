@@ -55,13 +55,13 @@ exports.companyCurrentBal = async () => {
 
 exports.clientCurrentBal = async (clientId) => {
   try {
-    // company details
-    const companyDetails = await pool.query(
+    // client details
+    const clientDetails = await pool.query(
       "SELECT client_accbal FROM clients WHERE client_id = $1",
       [clientId]
     );
 
-    return Number(companyDetails.rows[0].client_accbal);
+    return Number(clientDetails.rows[0].client_accbal);
   } catch (error) {
     return "Error method not allowed";
   }

@@ -184,6 +184,31 @@ on
 transactions.pricing_id = pricings.pricing_id 
 where transactions.regime_id = 'PT1418836593' 
 order by (transactions.transaction_date, transactions.transaction_time) desc;
+-- very complex
+SELECT 
+regimes.regime_id,
+regimes.regime_name, 
+regimes.regime_media, 
+regimes.regime_type,
+regimes.regime_city,
+regimes.c_date,
+regimes.c_time,
+min(pricings.pricing_amount) as min_ticket_price
+FROM regimes 
+LEFT OUTER JOIN pricings  
+on
+regimes.regime_id = pricings.regime_id 
+where regimes.regime_city = 'calabar' and 
+regimes.regime_type = 'concert' or regimes.regime_type = 'party'
+group by 
+regimes.regime_id,
+regimes.regime_name, 
+regimes.regime_media, 
+regimes.regime_type,
+regimes.regime_city,
+regimes.c_date,
+regimes.c_time
+order by (regimes.c_date, regimes.c_time) desc;
 
 INSERT INTO company (
 	company_id,

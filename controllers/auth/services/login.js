@@ -9,7 +9,8 @@ exports.logger = async (req, res) => {
 
     //Email Check
     const users = await pool.query(
-      "SELECT * FROM clients WHERE client_email = $1",
+      `SELECT * FROM 
+      clients WHERE client_email = $1`,
       [email]
     );
     if (users.rows.length === 0)

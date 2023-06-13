@@ -164,6 +164,26 @@ where regime_type = 'concert'
 order by (c_date, c_time) DESC;
 select *
 from pricings;
+-- simple
+SELECT * FROM transactions LEFT OUTER JOIN pricings 
+ON transactions.pricing_id = pricings.pricing_id;
+-- complex
+SELECT 
+clients.client_name,
+transactions.transaction_id, 
+transactions.amount, 
+pricings.pricing_name,
+pricings.pricing_amount,
+transactions.transaction_date,
+transactions.transaction_time
+FROM clients LEFT OUTER JOIN transactions 
+ON  
+transactions.client_id = clients.client_id
+LEFT OUTER JOIN pricings  
+on
+transactions.pricing_id = pricings.pricing_id 
+where transactions.regime_id = 'PT1418836593' 
+order by (transactions.transaction_date, transactions.transaction_time) desc;
 
 INSERT INTO company (
 	company_id,

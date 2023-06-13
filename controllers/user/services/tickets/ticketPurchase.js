@@ -61,7 +61,9 @@ exports.ticketsPurchase = async (req, res) => {
     if (numberOfTickets > 10)
       return res
         .status(402)
-        .json(`Each user's maximum number of tickets purchase per pricing is 10`);
+        .json(
+          `Each user's maximum number of tickets purchase per pricing is 10`
+        );
 
     // checks if user is trying to buy more than 10 tickets
     if (remainderChecker !== 0)
@@ -295,10 +297,9 @@ exports.paystackWebhook = async (req, res) => {
       const companyNewBal = Number(veryTrueCharge + compFormerBal);
 
       // handles clients balance update
+      const affAm = Number(pricingAmount.rows[0].pricing_affiliate_amount);
       const affiliateFormerBal = await clientCurrentBal(affiliatelog);
-      const affiliateNewBal = Number(
-        affiliateFormerBal + pricingAmount.rows[0].pricing_affiliate_amount
-      );
+      const affiliateNewBal = Number(affiliateFormerBal) + affAm;
 
       const regimeTopUp = await pool.query(
         "UPDATE regimes SET regime_accbal = $1 WHERE regime_id = $2 RETURNING *",

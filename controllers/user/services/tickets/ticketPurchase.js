@@ -203,7 +203,7 @@ exports.paystackWebhook = async (req, res) => {
             dayjs().format("HH:mm:ss"),
           ]
         );
-        return res.status(400).json("transaction declined");
+        return res.status(200).json("transaction declined");
       }
 
       // steps to handle if it does not have a remainder

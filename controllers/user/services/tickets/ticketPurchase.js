@@ -61,7 +61,7 @@ exports.ticketsPurchase = async (req, res) => {
     if (numberOfTickets > 10)
       return res
         .status(402)
-        .json(`Each user's maximum number of tickets purchase per event is 10`);
+        .json(`Each user's maximum number of tickets purchase per pricing is 10`);
 
     // checks if user is trying to buy more than 10 tickets
     if (remainderChecker !== 0)

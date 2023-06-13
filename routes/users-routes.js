@@ -24,7 +24,7 @@ router.post("/regimecheck", authenticateToken, users.nameCheck);
 router.post("/regimecreate", authenticateToken, users.regimeCreate);
 
 // queries regimes online
-router.get("/regimesonline", authenticateToken, users.regimesQueryOnline);
+router.post("/regimesonline", authenticateToken, users.regimesQueryOnline);
 
 // queries regimes offline
 router.get("/regimesoffline", users.regimesQueryOffline);

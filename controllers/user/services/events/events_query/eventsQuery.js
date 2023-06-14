@@ -10,7 +10,7 @@ exports.eventQueryPersonalizedOrNot = async (req, res) => {
       [user]
     );
 
-    // Checks if user has set preference
+    // Checks if user has set preference unique
     if (userPreference.rows.length !== 1) {
       const regimesNoPref = await pool.query(
         `

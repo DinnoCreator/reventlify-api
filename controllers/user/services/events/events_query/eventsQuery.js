@@ -38,7 +38,7 @@ exports.eventQueryPersonalizedOrNot = async (req, res) => {
           ORDER BY (regimes.c_date, regimes.c_time) DESC
         `
       );
-      return res.status(201).json({ regimes: regimesNoPref });
+      return res.status(201).json(regimesNoPref.rows);
     }
 
     // gets user preference
@@ -84,7 +84,7 @@ exports.eventQueryPersonalizedOrNot = async (req, res) => {
     );
 
     // final return statement
-    return res.status(200).json({ regimes: regimesWithPref });
+    return res.status(200).json(regimesWithPref.rows);
   } catch (error) {
     return res.status(418).json(error);
   }

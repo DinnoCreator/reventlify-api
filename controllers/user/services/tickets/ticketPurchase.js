@@ -162,14 +162,11 @@ exports.paystackWebhook = async (req, res) => {
         return res.status(400).json("The transaction was not completed");
       // converts it to naira
       const amount = Number(event.data.amount) / 100;
-      console.log(amount);
 
       const ticketPrice = Number(pricingAmount.rows[0].pricing_amount);
-      console.log(ticketPrice);
 
       // gets the number of tickets purchased
       let numberOfTickets = amount / ticketPrice;
-      console.log(numberOfTickets);
 
       // function to run if it has a remainder
       if (amount < ticketPrice) {
@@ -276,12 +273,9 @@ exports.paystackWebhook = async (req, res) => {
       // const clientReminantMoney = amount - ticketPrice * numberOfTickets;
 
       const moneyTotal = ticketPrice * numberOfTickets;
-      console.log(moneyTotal);
 
       const clientChargePerTicket = ticketPrice * regimeTypePercent / 100;
-      console.log(clientChargePerTicket);
       const clientTotalCharge = clientChargePerTicket * numberOfTickets;
-      console.log(clientTotalCharge);
       const paystackCharge = Number((moneyTotal * 1.5) / 100);
 
       const chargeHandler = () => {
@@ -292,9 +286,7 @@ exports.paystackWebhook = async (req, res) => {
         }
       };
       const trueCharge = chargeHandler();
-      console.log(trueCharge);
       const veryTrueCharge = clientTotalCharge - trueCharge;
-      console.log(veryTrueCharge);
 
       // handles regime balance update
       const regimeProfit = moneyTotal - clientTotalCharge;
@@ -303,7 +295,6 @@ exports.paystackWebhook = async (req, res) => {
 
       // handles company balance update
       const compFormerBal = await companyCurrentBal();
-      console.log(compFormerBal);
       const companyNewBal = Number(veryTrueCharge + compFormerBal);
 
       // handles clients balance update

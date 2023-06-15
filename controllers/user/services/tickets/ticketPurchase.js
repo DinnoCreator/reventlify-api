@@ -270,25 +270,26 @@ exports.paystackWebhook = async (req, res) => {
         regimeDetails.rows[0].regime_type
       );
 
-      const clientReminantMoney = amount - ticketPrice * numberOfTickets;
+      // const clientReminantMoney = amount - ticketPrice * numberOfTickets;
 
       const moneyTotal = ticketPrice * numberOfTickets;
 
-      const charge = (moneyTotal * regimeTypePercent) / 100;
+      const clientChargePerTicket = amount * regimeTypePercent / 100;
+      const clientTotalCharge = clientChargePerTicket * numberOfTickets;
       const paystackCharge = Number((moneyTotal * 1.5) / 100);
 
       const chargeHandler = () => {
-        if (moneyTotal < 2500) {
+        if (moneyTotal <= 2500) {
           return paystackCharge;
         } else {
           return Number(paystackCharge + 100);
         }
       };
       const trueCharge = chargeHandler();
-      const veryTrueCharge = charge - trueCharge;
+      const veryTrueCharge = clientTotalCharge - trueCharge;
 
       // handles regime balance update
-      const regimeProfit = moneyTotal - charge;
+      const regimeProfit = moneyTotal - clientTotalCharge;
       const regimeFormerBal = Number(regimeDetails.rows[0].regime_accbal);
       const regimeNewBal = regimeFormerBal + regimeProfit;
 

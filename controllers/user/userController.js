@@ -1,5 +1,5 @@
 const i = require("../user/services/personalization");
-const ii = require("../user/services/events/events_query/eventsQuery");
+const ii = require("../user/services/events/events_query/gEventsQuery");
 const iii = require("../user/services/events/events_creation_or_modification/nameAvailability");
 const iv = require("../user/services/events/events_creation_or_modification/createEvent");
 const v = require("../user/services/events/pricing_query/pricingQuery");

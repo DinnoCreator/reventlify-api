@@ -28,8 +28,16 @@ exports.ticketsPurchase = async (req, res) => {
     );
     // gets the number of tickets for that regime pricing owned by the client
     const ticketsBought = await pool.query(
-      "SELECT ticket_id FROM tickets WHERE ticket_buyer_id = $1 or ticket_owner_id = $2 AND pricing_id = $3",
-      [userId, userId, pricingId]
+      `SELECT ticket_id FROM tickets 
+        WHERE 
+          ticket_owner_id = $1
+        AND
+          pricing_id = $2
+        OR
+          ticket_buyer_id = $3
+        AND
+          pricing_id = $4`,
+      [userId, pricingId, userId, pricingId]
     );
 
     const ticketPrice = Number(pricingAmount.rows[0].pricing_amount);
@@ -274,7 +282,7 @@ exports.paystackWebhook = async (req, res) => {
 
       const moneyTotal = ticketPrice * numberOfTickets;
 
-      const clientChargePerTicket = ticketPrice * regimeTypePercent / 100;
+      const clientChargePerTicket = (ticketPrice * regimeTypePercent) / 100;
       const clientTotalCharge = clientChargePerTicket * numberOfTickets;
       const paystackCharge = Number((moneyTotal * 1.5) / 100);
 

@@ -3,7 +3,7 @@ const pool = require("../../../../../db");
 exports.eventQueryPersonalizedOrNot = async (req, res) => {
   const user = req.user;
   try {
-    const {city, state} = req.body
+    const { city, state } = req.body;
     // Gets user preference
     const userPreference = await pool.query(
       "SELECT * FROM preference WHERE owner_id = $1",
@@ -27,6 +27,7 @@ exports.eventQueryPersonalizedOrNot = async (req, res) => {
           LEFT OUTER JOIN pricings  
           ON
           regimes.regime_id = pricings.regime_id 
+          WHERE regimes.regime_city = $1 OR regimes.regime_state = $2
           GROUP BY 
           regimes.regime_id,
           regimes.regime_name, 
@@ -36,7 +37,8 @@ exports.eventQueryPersonalizedOrNot = async (req, res) => {
           regimes.c_date,
           regimes.c_time
           ORDER BY (regimes.c_date, regimes.c_time) DESC
-        `
+        `,
+        [city, state]
       );
       return res.status(201).json(regimesNoPref.rows);
     }
@@ -92,12 +94,36 @@ exports.eventQueryPersonalizedOrNot = async (req, res) => {
 
 exports.offline = async (req, res) => {
   try {
+    // gets regimes offline
     const regimesOffline = await pool.query(
-      "SELECT regime_id, regime_name, regime_address, regime_city, regime_state, regime_country, regime_media, regime_description, regime_start_date, regime_start_time, regime_end_date, regime_end_time, c_date, c_time FROM regimes ORDER BY (c_time, c_time) DESC"
+      `
+        SELECT 
+          regimes.regime_id,
+          regimes.regime_name, 
+          regimes.regime_media, 
+          regimes.regime_type,
+          regimes.regime_city,
+          regimes.c_date,
+          regimes.c_time,
+          min(pricings.pricing_amount) as min_ticket_price
+          FROM regimes 
+          LEFT OUTER JOIN pricings  
+          ON
+          regimes.regime_id = pricings.regime_id 
+          GROUP BY 
+          regimes.regime_id,
+          regimes.regime_name, 
+          regimes.regime_media, 
+          regimes.regime_type,
+          regimes.regime_city,
+          regimes.c_date,
+          regimes.c_time
+          ORDER BY (regimes.c_date, regimes.c_time) DESC
+        `
     );
 
     // final return statement
-    return res.status(200).json({ regimes: regimesOffline });
+    return res.status(200).json(regimesOffline.rows);
   } catch (error) {
     return res.status(500).json(error.message);
   }

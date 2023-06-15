@@ -278,7 +278,7 @@ exports.paystackWebhook = async (req, res) => {
       const moneyTotal = ticketPrice * numberOfTickets;
       console.log(moneyTotal);
 
-      const clientChargePerTicket = amount * regimeTypePercent / 100;
+      const clientChargePerTicket = ticketPrice * regimeTypePercent / 100;
       console.log(clientChargePerTicket);
       const clientTotalCharge = clientChargePerTicket * numberOfTickets;
       console.log(clientTotalCharge);

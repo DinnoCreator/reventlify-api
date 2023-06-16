@@ -47,6 +47,8 @@ exports.lastTenTicketBoughtUpdate = async (req, res) => {
       [regimeId]
     );
 
+    if (lastTenTicketsPurchased.rows.length === 0)
+      return res.status(200).json("Nothing to show.") 
     return res.status(400).json(lastTenTicketsPurchased.rows);
   } catch (error) {
     return res.status(500).json(error.message);

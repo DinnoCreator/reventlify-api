@@ -209,6 +209,16 @@ regimes.regime_city,
 regimes.c_date,
 regimes.c_time
 order by (regimes.c_date, regimes.c_time) desc;
+-- popular
+WITH most_popular AS 
+    (select pricings.regime_id as idd, 
+    count(pricings.regime_id) as regimes from tickets
+    LEFT OUTER JOIN pricings
+    ON
+    tickets.pricing_id = pricings.pricing_id   
+    GROUP BY tickets.pricing_id, pricings.regime_id)
+    select idd, sum(regimes) as ticket_bought from most_popular
+    group by most_popular.idd;
 
 INSERT INTO company (
 	company_id,

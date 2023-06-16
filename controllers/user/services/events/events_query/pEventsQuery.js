@@ -10,6 +10,8 @@ exports.popularEventInACathegory = async (req, res) => {
       regimes.regime_name as namer, 
       regimes.regime_media as media,
       regimes.regime_city as city,
+	  regimes.regime_start_date as start_date,
+	  regimes.regime_start_time as start_time,
       regimes.c_date as dater,
       regimes.c_time as timer,
       regimes.regime_type AS typer, 
@@ -29,12 +31,14 @@ exports.popularEventInACathegory = async (req, res) => {
       regimes.regime_media,
       regimes.regime_city,
       regimes.c_date,
-      regimes.c_time
+      regimes.c_time,
+	  regimes.regime_start_date,
+	  regimes.regime_start_time
       )
-      SELECT SUM(regimes) AS ticket_bought, typer, idd, namer, media, city, dater, timer
+      SELECT SUM(regimes) AS ticket_bought, typer, idd, namer, media, city, start_date, start_time, dater, timer
 	  FROM most_popular
       WHERE typer = $1
-      GROUP BY most_popular.idd, typer, namer, media, city, dater, timer
+      GROUP BY most_popular.idd, typer, namer, media, city, start_date, start_time, dater, timer
       ORDER BY ticket_bought DESC
       FETCH FIRST 10 ROW ONLY
     `,

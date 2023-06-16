@@ -10,8 +10,8 @@ exports.popularEventInACathegory = async (req, res) => {
       regimes.regime_name AS namer, 
       regimes.regime_media AS media,
       regimes.regime_city AS city,
-	  regimes.regime_start_date AS start_date,
-	  regimes.regime_start_time AS start_time,
+	    regimes.regime_start_date AS start_date,
+	    regimes.regime_start_time AS start_time,
       regimes.c_date AS dater,
       regimes.c_time AS timer,
       regimes.regime_type AS typer, 
@@ -32,11 +32,11 @@ exports.popularEventInACathegory = async (req, res) => {
       regimes.regime_city,
       regimes.c_date,
       regimes.c_time,
-	  regimes.regime_start_date,
-	  regimes.regime_start_time
+	    regimes.regime_start_date,
+	    regimes.regime_start_time
       )
       SELECT SUM(regimes) AS ticket_bought, typer, idd, namer, media, city, start_date, start_time, dater, timer
-	  FROM most_popular
+	    FROM most_popular
       WHERE typer = $1
       GROUP BY most_popular.idd, typer, namer, media, city, start_date, start_time, dater, timer
       ORDER BY ticket_bought DESC

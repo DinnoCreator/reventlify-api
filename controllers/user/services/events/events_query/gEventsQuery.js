@@ -42,7 +42,7 @@ exports.eventQueryPersonalizedOrNot = async (req, res) => {
       );
       if (regimesNoPref.rows.length === 0)
         return res.status(202).json("nothing to show");
-      return res.status(201).json(regimesNoPref.rows);
+      return res.status(201).json(regimesNoPref.rows[0]);
     }
 
     // gets user preference
@@ -90,7 +90,7 @@ exports.eventQueryPersonalizedOrNot = async (req, res) => {
       return res.status(202).json("nothing to show");
 
     // final return statement
-    return res.status(200).json(regimesWithPref.rows);
+    return res.status(200).json(regimesWithPref.rows[0]);
   } catch (error) {
     return res.status(500).json(error);
   }
@@ -129,7 +129,7 @@ exports.offline = async (req, res) => {
       return res.status(202).json("nothing to show");
 
     // final return statement
-    return res.status(200).json(regimesOffline.rows);
+    return res.status(200).json(regimesOffline.rows[0]);
   } catch (error) {
     return res.status(500).json(error.message);
   }

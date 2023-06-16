@@ -6,6 +6,7 @@ const authenticateToken = require("../utilities/authenticateToken");
 //router
 const { Router } = require("express");
 
+/* clients routes begining*/
 // personalizationchecker
 router.get(
   "/personalizationchecker",
@@ -16,12 +17,6 @@ router.get(
 // personalization
 router.post("/personalization", authenticateToken, users.personalization);
 
-// checks regime name
-router.post("/regimecheck", authenticateToken, users.nameCheck);
-
-// creates regime
-router.post("/regimecreate", authenticateToken, users.regimeCreate);
-
 // queries regimes online
 router.post("/regimesonline", authenticateToken, users.regimesQueryOnline);
 
@@ -29,7 +24,7 @@ router.post("/regimesonline", authenticateToken, users.regimesQueryOnline);
 router.get("/regimesoffline", users.regimesQueryOffline);
 
 // queries regimes most popular event in a cathegory
-router.post("/regimescatpopular", authenticateToken, users.mostPopularInCat);
+router.get("/regimescatpopular", authenticateToken, users.mostPopularInCat);
 
 // queries regimes most popular event in a cathegory
 router.get("/mostpopularevent", users.mostPopularEvent);
@@ -53,9 +48,21 @@ router.post("/paystackwebhook", users.purchaseWebHook);
 router.get("/ticketsowned", authenticateToken, users.ticketsOwned);
 
 // ticket owned
-router.post("/ticketowned", authenticateToken, users.ticketOwned);
+router.get("/ticketowned/:ticketId", authenticateToken, users.ticketOwned);
 
 // ticket owned
 router.put("/tickettransfer", authenticateToken, users.ticketShare);
+/* clients routes ending*/
+
+/* regime creators routes begining*/
+// checks regime name
+router.post("/regimecheck", authenticateToken, users.nameCheck);
+
+// creates regime
+router.post("/regimecreate", authenticateToken, users.regimeCreate);
+
+// gets last ten tickets purchase
+router.get("/lasttentickets/:regimeId", authenticateToken, users.lastTen);
+/* regime creators routes ending*/
 
 module.exports = router;

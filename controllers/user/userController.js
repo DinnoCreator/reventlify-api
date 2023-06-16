@@ -8,18 +8,14 @@ const v = require("../user/services/events/pricing_query/pricingQuery");
 const vi = require("../user/services/tickets/ticketPurchase");
 const vii = require("../user/services/tickets/ticketsQuery");
 const viiSub = require("../user/services/tickets/ticketShare");
+const viii = require("../user/services/events/regime_creator_services/ticketBoughtUpdate");
 
+/* clients routes begining*/
 // personalizationChecker
 exports.personalizationChecker = i.personalizationChecker;
 
 // personalization
 exports.personalization = i.personalization;
-
-// checks regime name
-exports.nameCheck = iii.nameAvailability;
-
-// creates regime
-exports.regimeCreate = iv.createRegime;
 
 // queries regimes online
 exports.regimesQueryOnline = ii.eventQueryPersonalizedOrNot;
@@ -59,3 +55,15 @@ exports.ticketOwned = vii.ticketQuery;
 
 // ticket query
 exports.ticketShare = viiSub.ticketShare;
+/* clients routes ending*/
+
+/* regime creators routes begining*/
+// checks regime name
+exports.nameCheck = iii.nameAvailability;
+
+// creates regime
+exports.regimeCreate = iv.createRegime;
+
+// last ten tickets bought
+exports.lastTen = viii.lastTenTicketBoughtUpdate;
+/* regime creators routes ending*/

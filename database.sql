@@ -272,3 +272,25 @@ VALUES (
 	'2023-06-07',
 	'13:19:02'
 );
+
+SELECT 
+      pricings.regime_id,
+	  pricings.pricing_id,
+	  pricings.pricing_name,
+	  tickets.ticket_id,
+	  tickets.ticket_buyer_id,
+	  tickets.c_date,
+	  tickets.c_time
+	  FROM tickets
+      LEFT JOIN pricings
+      ON
+      tickets.pricing_id = pricings.pricing_id
+	  WHERE
+      GROUP BY 
+      pricings.regime_id,
+	  pricings.pricing_id,
+	  pricings.pricing_name,
+	  tickets.ticket_id,
+	  tickets.ticket_buyer_id,
+	  tickets.c_date,
+	  tickets.c_time;

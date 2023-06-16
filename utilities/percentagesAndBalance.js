@@ -81,15 +81,15 @@ exports.clientDetails = async (clientId) => {
   }
 };
 
-exports.regimeDetails = async (regimeCreator) => {
+exports.regimeDetails = async (regimeId) => {
   try {
     // client details
     const regimeDetails = await pool.query(
-      "SELECT * FROM regimes WHERE creator_id = $1",
-      [regimeCreator]
+      "SELECT * FROM regimes WHERE regime_id = $1",
+      [regimeId]
     );
 
-    return regimeDetails.rows[0];
+    return regimeDetails.rows;
   } catch (error) {
     return "Error method not allowed";
   }

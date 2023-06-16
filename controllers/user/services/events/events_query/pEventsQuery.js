@@ -1,7 +1,7 @@
 const pool = require("../../../../../db");
 
 exports.popularEventInACathegory = async (req, res) => {
-  const { cathegory } = req.body;
+  const { cathegory } = req.params;
   try {
     const mostPopular = await pool.query(
       `
@@ -44,9 +44,9 @@ exports.popularEventInACathegory = async (req, res) => {
     `,
       [cathegory]
     );
-    if (mostPopular.rows.length === 0)
+    if (mostPopular[0].rows.length === 0)
       return res.status(202).json("nothing to show");
-    return res.status(200).json(mostPopular.rows);
+    return res.status(200).json(mostPopular[0].rows);
   } catch (error) {
     return res.status(500).json(error.message);
   }
@@ -93,9 +93,9 @@ exports.mostPopularEvent = async (req, res) => {
         FETCH FIRST 10 ROW ONLY
         `
     );
-    if (mostPopular.rows.length === 0)
+    if (mostPopular[0].rows.length === 0)
       return res.status(202).json("nothing to show");
-    return res.status(200).json(mostPopular.rows);
+    return res.status(200).json(mostPopular[0].rows);
   } catch (error) {
     return res.status(500).json(error.message);
   }

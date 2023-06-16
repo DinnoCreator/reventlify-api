@@ -2,7 +2,7 @@ const pool = require("../../../../db");
 
 exports.ticketQuery = async (req, res) => {
   const userId = req.user;
-  const { ticketId } = req.body;
+  const { ticketId } = req.params;
   try {
     const ticketOwnedByClient = await pool.query(
       `

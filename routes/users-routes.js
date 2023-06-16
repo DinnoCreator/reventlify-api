@@ -3,7 +3,6 @@ require("dotenv").config();
 const router = require("express").Router();
 const users = require("../controllers/user/userController");
 const authenticateToken = require("../utilities/authenticateToken");
-const sizeChecker = require("../utilities/sizeChecker");
 //router
 const { Router } = require("express");
 

@@ -7,9 +7,9 @@ exports.searchEvents = async (req, res) => {
       `
         SELECT regime_name, regime_id
         FROM regimes
-        WHERE regime_name like $1
+        WHERE regime_name like $1 or regime_id like $2
         `,
-      [`${searchCharacters}%`]
+      [`${searchCharacters}%`, `${searchCharacters}%`]
     );
     if (searchResult.rows.length === 0)
       return res.status(202).json("no result found");

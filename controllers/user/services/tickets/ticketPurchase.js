@@ -389,7 +389,7 @@ exports.paystackWebhook = async (req, res) => {
           userName
         )} just successfully purchased ${numberOfTickets} ${pricingAmount.rows[0].pricing_name.toLowerCase()} ticket${
           numberOfTickets === 1 ? "" : "s"
-        } for ${regimeDetails.rows[0].regime_name.toUpperCase()} regimee and your current balance is ${
+        } for ${regimeDetails.rows[0].regime_name.toUpperCase()} regimee and your current balance is N${
           companyTopUp.rows[0].company_accbal
         }.`, // plain text body
         html: `<h1>Ticket Purchase</h1>
@@ -397,7 +397,7 @@ exports.paystackWebhook = async (req, res) => {
         userName
       )} just successfully purchased ${numberOfTickets} ${pricingAmount.rows[0].pricing_name.toLowerCase()} ticket${
           numberOfTickets === 1 ? "" : "s"
-        } for <strong>${regimeDetails.rows[0].regime_name.toUpperCase()}</strong> regime and your current balance is ${
+        } for <strong>${regimeDetails.rows[0].regime_name.toUpperCase()}</strong> regime and your current balance is N${
           companyTopUp.rows[0].company_accbal
         }.</p>`, //HTML message
       };

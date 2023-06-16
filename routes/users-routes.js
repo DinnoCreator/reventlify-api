@@ -24,7 +24,7 @@ router.post("/regimesonline", authenticateToken, users.regimesQueryOnline);
 router.get("/regimesoffline", users.regimesQueryOffline);
 
 // queries regimes most popular event in a cathegory
-router.get("/regimescatpopular", authenticateToken, users.mostPopularInCat);
+router.get("/regimescatpopular/:cathegory", authenticateToken, users.mostPopularInCat);
 
 // queries regimes most popular event in a cathegory
 router.get("/mostpopularevent", users.mostPopularEvent);

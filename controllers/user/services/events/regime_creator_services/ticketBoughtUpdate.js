@@ -47,7 +47,7 @@ exports.lastTenTicketBoughtUpdate = async (req, res) => {
       [regimeId]
     );
 
-    return res.status(400).json(lastTenTicketsPurchased.rows[0]);
+    return res.status(400).json(lastTenTicketsPurchased.rows);
   } catch (error) {
     return res.status(500).json(error.message);
   }

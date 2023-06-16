@@ -1,6 +1,7 @@
 const i = require("../user/services/personalization");
 const ii = require("../user/services/events/events_query/gEventsQuery");
 const iiSub = require("../user/services/events/events_query/pEventsQuery");
+const iiSubi = require("../user/services/events/events_query/sEventQuery");
 const iii = require("../user/services/events/events_creation_or_modification/nameAvailability");
 const iv = require("../user/services/events/events_creation_or_modification/createEvent");
 const v = require("../user/services/events/pricing_query/pricingQuery");
@@ -30,6 +31,9 @@ exports.mostPopularInCat = iiSub.popularEventInACathegory;
 
 // queries regimes most popular event
 exports.mostPopularEvent = iiSub.mostPopularEvent;
+
+// Search Events
+exports.searchEvents = iiSubi.searchEvents;
 
 // queries pricings online
 exports.pricingsOnline = v.pricingQueryOnline;

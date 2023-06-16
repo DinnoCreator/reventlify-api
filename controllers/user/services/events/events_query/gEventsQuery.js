@@ -92,7 +92,7 @@ exports.eventQueryPersonalizedOrNot = async (req, res) => {
     // final return statement
     return res.status(200).json(regimesWithPref.rows);
   } catch (error) {
-    return res.status(418).json(error);
+    return res.status(500).json(error);
   }
 };
 

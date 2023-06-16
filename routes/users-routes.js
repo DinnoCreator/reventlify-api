@@ -35,6 +35,9 @@ router.post("/regimescatpopular", authenticateToken, users.mostPopularInCat);
 // queries regimes most popular event in a cathegory
 router.get("/mostpopularevent", users.mostPopularEvent);
 
+// queries regimes most popular event in a cathegory
+router.get("/searchevents", users.searchEvents);
+
 // queries pricings online
 router.get("/pricingsonline", authenticateToken, users.pricingsOnline);
 

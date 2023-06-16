@@ -2,7 +2,7 @@ const pool = require("../../../../db");
 
 exports.ticketQuery = async (req, res) => {
   const userId = req.user;
-  const {ticketId} = req.body;
+  const { ticketId } = req.body;
   try {
     const ticketOwnedByClient = await pool.query(
       `
@@ -44,10 +44,11 @@ exports.ticketQuery = async (req, res) => {
       `,
       [userId, ticketId]
     );
-     if (ticketOwnedByClient.rows.length === 0)
-    return res.status(202).json("nothing to show");
+    if (ticketOwnedByClient.rows.length === 0)
+      return res.status(202).json("nothing to show");
     return res.status(200).json(ticketOwnedByClient.rows[0]);
   } catch (error) {
+    return res.status(500).json(error.message);
     return;
   }
 };
@@ -81,10 +82,10 @@ exports.ticketsQuery = async (req, res) => {
       `,
       [userId]
     );
-     if (ticketsOwnedByClient.rows.length === 0)
-    return res.status(202).json("nothing to show");
+    if (ticketsOwnedByClient.rows.length === 0)
+      return res.status(202).json("nothing to show");
     return res.status(200).json(ticketsOwnedByClient.rows);
   } catch (error) {
-    return;
+    return res.status(500).json(error.message);
   }
 };

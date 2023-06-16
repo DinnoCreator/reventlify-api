@@ -17,8 +17,8 @@ exports.popularEventInACathegory = async (req, res) => {
         pricings.regime_id = regimes.regime_id
         GROUP BY tickets.pricing_id, pricings.regime_id, regimes.regime_type
     )
-    SELECT typer, idd, SUM(regimes) as ticket_bought from most_popular WHERE
-    typer = $1
+    SELECT typer, idd, SUM(regimes) as ticket_bought from most_popular 
+    WHERE typer = $1
     GROUP BY most_popular.idd, most_popular.typer
     ORDER BY ticket_bought DESC
     FETCH FIRST 10 ROW ONLY

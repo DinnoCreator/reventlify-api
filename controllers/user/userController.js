@@ -46,5 +46,8 @@ exports.purchaseWebHook = vi.paystackWebhook;
 // ticket purchase verifier2
 exports.purchaseVerifier = vi.purchaseVerifier;
 
+// tickets query
+exports.ticketsOwned = vii.ticketsQuery;
+
 // ticket query
-exports.ticketsOwned = vii.ticketQuery;
+exports.ticketOwned = vii.ticketQuery;

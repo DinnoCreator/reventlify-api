@@ -48,6 +48,9 @@ router.post("/buyticket", authenticateToken, users.purchaseInitializer);
 router.post("/paystackwebhook", users.purchaseWebHook);
 
 // tickets owned
-router.get("/ticketsowned", authenticateToken, users.ticketsOwned);
+router.post("/ticketsowned", authenticateToken, users.ticketsOwned);
+
+// ticket owned
+router.post("/ticketowned", authenticateToken, users.ticketOwned);
 
 module.exports = router;

@@ -39,10 +39,10 @@ router.get("/mostpopularevent", users.mostPopularEvent);
 router.post("/searchevents", users.searchEvents);
 
 // queries pricings online
-router.get("/pricingsonline", authenticateToken, users.pricingsOnline);
+router.post("/pricingsonline", authenticateToken, users.pricingsOnline);
 
 // queries pricings offline
-router.get("/pricingsoffline", users.pricingsOffline);
+router.post("/pricingsoffline", users.pricingsOffline);
 
 // ticket purchase
 router.post("/buyticket", authenticateToken, users.purchaseInitializer);

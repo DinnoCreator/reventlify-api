@@ -28,6 +28,9 @@ exports.regimesQueryOffline = ii.offline;
 // queries regimes most popular event in a cathegory
 exports.mostPopularInCat = iiSub.popularEventInACathegory;
 
+// queries regimes most popular event
+exports.mostPopularEvent = iiSub.mostPopularEvent;
+
 // queries pricings online
 exports.pricingsOnline = v.pricingQueryOnline;
 

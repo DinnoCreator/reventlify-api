@@ -40,6 +40,8 @@ exports.eventQueryPersonalizedOrNot = async (req, res) => {
         `,
         [city, state]
       );
+      if (regimesNoPref.rows.length === 0)
+        return res.status(202).json("nothing to show");
       return res.status(201).json(regimesNoPref.rows);
     }
 
@@ -84,6 +86,8 @@ exports.eventQueryPersonalizedOrNot = async (req, res) => {
         preferenceThree.toLowerCase(),
       ]
     );
+    if (regimesWithPref.rows.length === 0)
+      return res.status(202).json("nothing to show");
 
     // final return statement
     return res.status(200).json(regimesWithPref.rows);
@@ -121,6 +125,8 @@ exports.offline = async (req, res) => {
           ORDER BY (regimes.c_date, regimes.c_time) DESC
         `
     );
+    if (regimesOffline.rows.length === 0)
+      return res.status(202).json("nothing to show");
 
     // final return statement
     return res.status(200).json(regimesOffline.rows);

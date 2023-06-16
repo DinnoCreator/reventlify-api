@@ -1,5 +1,6 @@
 const i = require("../user/services/personalization");
 const ii = require("../user/services/events/events_query/gEventsQuery");
+const iiSub = require("../user/services/events/events_query/pEventsQuery");
 const iii = require("../user/services/events/events_creation_or_modification/nameAvailability");
 const iv = require("../user/services/events/events_creation_or_modification/createEvent");
 const v = require("../user/services/events/pricing_query/pricingQuery");
@@ -23,6 +24,9 @@ exports.regimesQueryOnline = ii.eventQueryPersonalizedOrNot;
 
 // queries regimes offline
 exports.regimesQueryOffline = ii.offline;
+
+// queries regimes most popular event in a cathegory
+exports.mostPopularInCat = iiSub.popularEventInACathegory;
 
 // queries pricings online
 exports.pricingsOnline = v.pricingQueryOnline;

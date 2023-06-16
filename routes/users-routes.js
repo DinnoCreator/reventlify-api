@@ -29,6 +29,9 @@ router.post("/regimesonline", authenticateToken, users.regimesQueryOnline);
 // queries regimes offline
 router.get("/regimesoffline", users.regimesQueryOffline);
 
+// queries regimes most popular event in a cathegory
+router.post("/regimescatpopular", authenticateToken, users.regimesQueryOnline);
+
 // queries pricings online
 router.get("/pricingsonline", authenticateToken, users.pricingsOnline);
 

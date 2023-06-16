@@ -12,9 +12,8 @@ exports.popularEventInACathegory = async (req, res) => {
       regimes.regime_city as city,
       regimes.c_date as dater,
       regimes.c_time as timer,
-      MIN(pricings.pricing_amount) AS min_ticket_price,
-       regimes.regime_type AS typer, 
-       pricings.regime_id AS idd, 
+      regimes.regime_type AS typer, 
+      pricings.regime_id AS idd,
       COUNT(pricings.regime_id) AS regimes FROM tickets
       LEFT JOIN pricings
       ON
@@ -23,20 +22,19 @@ exports.popularEventInACathegory = async (req, res) => {
       ON
       pricings.regime_id = regimes.regime_id
       GROUP BY 
-       tickets.pricing_id, 
-       pricings.regime_id, 
-       regimes.regime_type,
+      tickets.pricing_id, 
+      pricings.regime_id, 
+      regimes.regime_type,
       regimes.regime_name, 
       regimes.regime_media,
       regimes.regime_city,
       regimes.c_date,
-      regimes.c_time,
-      pricings.pricing_amount
+      regimes.c_time
       )
-      SELECT typer, idd, namer, media, city, dater, timer, min_ticket_price, SUM(regimes) 
-      AS ticket_bought FROM most_popular
+      SELECT SUM(regimes) AS ticket_bought, typer, idd, namer, media, city, dater, timer
+	  FROM most_popular
       WHERE typer = $1
-      GROUP BY idd, typer, namer, media, city, dater, timer, min_ticket_price
+      GROUP BY most_popular.idd, typer, namer, media, city, dater, timer
       ORDER BY ticket_bought DESC
       FETCH FIRST 10 ROW ONLY
     `,

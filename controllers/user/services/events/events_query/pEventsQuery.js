@@ -7,13 +7,13 @@ exports.popularEventInACathegory = async (req, res) => {
       `
       WITH most_popular AS 
       (SELECT 
-      regimes.regime_name as namer, 
-      regimes.regime_media as media,
-      regimes.regime_city as city,
-	  regimes.regime_start_date as start_date,
-	  regimes.regime_start_time as start_time,
-      regimes.c_date as dater,
-      regimes.c_time as timer,
+      regimes.regime_name AS namer, 
+      regimes.regime_media AS media,
+      regimes.regime_city AS city,
+	  regimes.regime_start_date AS start_date,
+	  regimes.regime_start_time AS start_time,
+      regimes.c_date AS dater,
+      regimes.c_time AS timer,
       regimes.regime_type AS typer, 
       pricings.regime_id AS idd,
       COUNT(pricings.regime_id) AS regimes FROM tickets

@@ -7,6 +7,7 @@ const iv = require("../user/services/events/events_creation_or_modification/crea
 const v = require("../user/services/events/pricing_query/pricingQuery");
 const vi = require("../user/services/tickets/ticketPurchase");
 const vii = require("../user/services/tickets/ticketsQuery");
+const viiSub = require("../user/services/tickets/ticketShare");
 
 // personalizationChecker
 exports.personalizationChecker = i.personalizationChecker;
@@ -55,3 +56,6 @@ exports.ticketsOwned = vii.ticketsQuery;
 
 // ticket query
 exports.ticketOwned = vii.ticketQuery;
+
+// ticket query
+exports.ticketShare = viiSub.ticketShare;

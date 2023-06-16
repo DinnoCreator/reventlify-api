@@ -57,7 +57,7 @@ exports.clientCurrentBal = async (clientId) => {
   try {
     // client details
     const clientDetails = await pool.query(
-      "SELECT client_accbal FROM clients WHERE client_id = $1",
+      "SELECT client_accbal, client_name FROM clients WHERE client_id = $1",
       [clientId]
     );
 

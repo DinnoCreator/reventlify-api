@@ -40,7 +40,7 @@ exports.ticketQuery = async (req, res) => {
       regimes.regime_start_time,
       tickets.c_date,
       tickets.c_time
-      ORDER BY (regimes.c_date, regimes.c_time) DESC
+      ORDER BY (tickets.c_date, tickets.c_time) DESC
       `,
       [userId, ticketId]
     );
@@ -77,7 +77,7 @@ exports.ticketsQuery = async (req, res) => {
       tickets.ticket_id,
       tickets.c_date,
       tickets.c_time
-      ORDER BY (regimes.c_date, regimes.c_time) DESC
+      ORDER BY (tickets.c_date, tickets.c_time) DESC
       `,
       [userId]
     );

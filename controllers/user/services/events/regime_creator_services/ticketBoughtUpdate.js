@@ -4,7 +4,7 @@ const { regimeDetails } = require("../../../../../utilities/percentagesAndBalanc
 exports.ticketBoughtUpdate = async (req, res) => {
     const regimeCreator = req.user
   try {
-    const regimeDetails = regimeDetails(regimeCreator)
+    const regimeDetailss = regimeDetails(regimeCreator)
     return;
   } catch (error) {
     return;

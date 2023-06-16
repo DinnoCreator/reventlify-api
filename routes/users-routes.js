@@ -30,7 +30,7 @@ router.post("/regimesonline", authenticateToken, users.regimesQueryOnline);
 router.get("/regimesoffline", users.regimesQueryOffline);
 
 // queries regimes most popular event in a cathegory
-router.post("/regimescatpopular", authenticateToken, users.regimesQueryOnline);
+router.post("/regimescatpopular", authenticateToken, users.mostPopularInCat);
 
 // queries pricings online
 router.get("/pricingsonline", authenticateToken, users.pricingsOnline);

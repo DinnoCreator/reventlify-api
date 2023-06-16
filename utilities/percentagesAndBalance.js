@@ -66,3 +66,31 @@ exports.clientCurrentBal = async (clientId) => {
     return "Error method not allowed";
   }
 };
+
+exports.clientDetails = async (clientId) => {
+  try {
+    // client details
+    const clientDetails = await pool.query(
+      "SELECT * FROM clients WHERE client_id = $1",
+      [clientId]
+    );
+
+    return clientDetails.rows[0];
+  } catch (error) {
+    return "Error method not allowed";
+  }
+};
+
+exports.regimeDetails = async (regimeCreator) => {
+  try {
+    // client details
+    const regimeDetails = await pool.query(
+      "SELECT * FROM regimes WHERE creator_id = $1",
+      [regimeCreator]
+    );
+
+    return regimeDetails.rows[0];
+  } catch (error) {
+    return "Error method not allowed";
+  }
+};

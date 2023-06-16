@@ -56,6 +56,6 @@ router.get("/ticketsowned", authenticateToken, users.ticketsOwned);
 router.post("/ticketowned", authenticateToken, users.ticketOwned);
 
 // ticket owned
-router.post("/tickettransfer", authenticateToken, users.ticketShare);
+router.put("/tickettransfer", authenticateToken, users.ticketShare);
 
 module.exports = router;

@@ -1,6 +1,6 @@
 const pool = require("../../../../db");
 const {
-  clientCurrentBal,
+  clientDetails,
 } = require("../../../../utilities/percentagesAndBalance");
 
 exports.ticketShare = async (req, res) => {
@@ -24,11 +24,11 @@ exports.ticketShare = async (req, res) => {
       [receiverId, ticketId]
     );
 
-    const receiverName = await clientCurrentBal(receiverId);
+    const receiverName = await clientDetails(receiverId).client_name;
     return res
       .status(200)
       .json(`You have successfully transfered your ticket to ${receiverName}`);
   } catch (error) {
-    return;
+    return res.status(200).json(error.message);
   }
 };

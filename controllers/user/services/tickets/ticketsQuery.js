@@ -17,8 +17,8 @@ exports.ticketQuery = async (req, res) => {
       regimes.regime_country,
       regimes.regime_start_date,
       regimes.regime_start_time,
-      regimes.c_date,
-      regimes.c_time
+      tickets.c_date,
+      tickets.c_time
       FROM tickets
       LEFT JOIN pricings
       ON
@@ -38,8 +38,8 @@ exports.ticketQuery = async (req, res) => {
       regimes.regime_country,
       regimes.regime_start_date,
       regimes.regime_start_time,
-      regimes.c_date,
-      regimes.c_time
+      tickets.c_date,
+      tickets.c_time
       ORDER BY (regimes.c_date, regimes.c_time) DESC
       `,
       [userId, ticketId]
@@ -61,8 +61,8 @@ exports.ticketsQuery = async (req, res) => {
       regimes.regime_media,
       regimes.regime_name,
       tickets.ticket_id,
-      regimes.c_date,
-      regimes.c_time
+      tickets.c_date,
+      tickets.c_time
       FROM tickets
       LEFT JOIN pricings
       ON
@@ -75,8 +75,8 @@ exports.ticketsQuery = async (req, res) => {
       regimes.regime_media,
       regimes.regime_name,
       tickets.ticket_id,
-      regimes.c_date,
-      regimes.c_time
+      tickets.c_date,
+      tickets.c_time
       ORDER BY (regimes.c_date, regimes.c_time) DESC
       `,
       [userId]

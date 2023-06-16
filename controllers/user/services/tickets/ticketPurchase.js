@@ -249,10 +249,11 @@ exports.paystackWebhook = async (req, res) => {
       for (let i = 1; i <= numberOfTickets; i++) {
         if (i <= 10) {
           await pool.query(
-            "INSERT INTO tickets(ticket_id, pricing_id, transaction_id, ticket_buyer_id, ticket_owner_id, ticket_amount, ticket_status, affiliate_id, c_date, c_time) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *",
+            "INSERT INTO tickets(ticket_id, pricing_id, attendance, transaction_id, ticket_buyer_id, ticket_owner_id, ticket_amount, ticket_status, affiliate_id, c_date, c_time) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *",
             [
               await ticketID(),
               pricingAmount.rows[0].pricing_id,
+              'pending',
               transaction.rows[0].transaction_id,
               userId,
               userId,

@@ -38,7 +38,7 @@ exports.popularEventInACathegory = async (req, res) => {
       WHERE typer = $1
       GROUP BY idd, typer, namer, media, city, dater, timer, min_ticket_price
       ORDER BY ticket_bought DESC
-      FETCH FRIST 10 ROW ONLY;
+      FETCH FRIST 10 ROW ONLY
     `,
       [cathegory]
     );

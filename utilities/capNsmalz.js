@@ -23,27 +23,27 @@ exports.neatCapz = function (yourName) {
 //  regime id prefix helper
 exports.regimeTypePrefix = (regimeType) => {
   if (regimeType.toLowerCase() === "concert") {
-    return "CT";
+    return "CT".toLowerCase();
   } else if (regimeType.toLowerCase() === "conference"){
-    return "CF";
+    return "CF".toLowerCase();
   } else if (regimeType.toLowerCase() === "theatre"){
-    return "TH";
+    return "TH".toLowerCase();
   } else if (regimeType.toLowerCase() === "pageantry"){
-    return "PG";
+    return "PG".toLowerCase();
   } else if (regimeType.toLowerCase() === "service"){
-    return "SC";
+    return "SC".toLowerCase();
   } else if (regimeType.toLowerCase() === "education"){
-    return "ED";
+    return "ED".toLowerCase();
   } else if (regimeType.toLowerCase() === "carnival"){
-    return "CV";
+    return "CV".toLowerCase();
   } else if (regimeType.toLowerCase() === "festival"){
-    return "FV";
+    return "FV".toLowerCase();
   } else if (regimeType.toLowerCase() === "party"){
-    return "PT";
+    return "PT".toLowerCase();
   } else if (regimeType.toLowerCase() === "sport"){
-    return "SP";
+    return "SP".toLowerCase();
   } else if (regimeType.toLowerCase() === "talentshow"){
-    return "TS";
+    return "TS".toLowerCase();
   } else {
     return "Error method not allowed";
   }

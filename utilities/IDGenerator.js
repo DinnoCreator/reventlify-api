@@ -66,7 +66,7 @@ exports.pricingID = async (typePrefix) => {
     // Checks if the ID already exists
     const checker = await pool.query(
       "SELECT * FROM pricings WHERE pricing_id = $1",
-      [`${typePrefix}${idP}P`]
+      [`${typePrefix}${idP}P`.toLowerCase()]
     );
 
     if (checker.rows.length !== 0) {

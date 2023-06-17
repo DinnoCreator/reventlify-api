@@ -11,7 +11,7 @@ exports.eventQueryPersonalizedOrNot = async (req, res) => {
     );
 
     // Checks if user has set preference unique
-    if (userPreference.rows.length !== 1) {
+    if (userPreference.rows.length === 0) {
       const regimesNoPref = await pool.query(
         `
         SELECT 
@@ -40,8 +40,9 @@ exports.eventQueryPersonalizedOrNot = async (req, res) => {
         `,
         [city, state]
       );
-      if (regimesNoPref.rows.length === 0)
+      if (regimesNoPref.rows.length === 0) {
         return res.status(202).json("nothing to show");
+      }
       return res.status(201).json(regimesNoPref.rows);
     }
 
@@ -86,8 +87,9 @@ exports.eventQueryPersonalizedOrNot = async (req, res) => {
         preferenceThree.toLowerCase(),
       ]
     );
-    if (regimesWithPref.rows.length === 0)
-      return res.status(202).json("nothing to show");
+    if (regimesWithPref.rows.length === 0) {
+      return res.status(202).json("nothing to show")
+    }
 
     // final return statement
     return res.status(200).json(regimesWithPref.rows);

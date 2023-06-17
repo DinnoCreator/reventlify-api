@@ -6,8 +6,24 @@ const capNsmalz = require("../../../utilities/capNsmalz");
 const idGenerator = require("../../../utilities/IDGenerator");
 
 exports.register = async (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, email, password, verificationCode } = req.body;
   try {
+    // gets the real verification code
+    const code = await pool.query(
+      "SELECT * FROM limbo WHERE client_email = $1",
+      [email]
+    );
+
+    // checks if the code entered is valid
+    if (code.rows[0].client_verify !== verificationCode)
+      return res.status(400).json("Incorrect Code.");
+
+    // sets the client in limbo to verified final registeration
+    await pool.query(
+      "UPDATE limbo SET client_status = $1 WHERE client_email = $2",
+      ["VERIFIED", email]
+    );
+
     const user = await pool.query(
       "SELECT * FROM clients WHERE client_email = $1",
       [email]

@@ -1,11 +1,13 @@
 const pool = require("../../../../../db");
 
 exports.nameAvailability = async (req, res) => {
-  const { name } = req.body;
+  const { regimeName } = req.body;
   try {
+    if (regimeName.length === 0) res.status(400).json("Empty search input");
+
     const nameCheck = await pool.query(
       "SELECT * FROM regimes WHERE regime_name = $1",
-      [name]
+      [regimeName.toLowerCase()]
     );
 
     if (nameCheck.rows.length === 1)

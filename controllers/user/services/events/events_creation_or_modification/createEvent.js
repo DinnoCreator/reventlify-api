@@ -30,6 +30,19 @@ exports.createRegime = async (req, res) => {
     regimeEndTime,
   } = req.body;
   try {
+    // Checks name availability
+    if (regimeName.length === 0)
+      return res.status(400).json("You must enter a regime name.");
+    if (
+      regimeAddress.length === 0 ||
+      regimePricing.length === 0 ||
+      regimeWithdrawalPin.length === 0 ||
+      regimeStartDate.length === 0 ||
+      regimeStartTime.length === 0 ||
+      regimeEndDate.length === 0 ||
+      regimeEndTime.length === 0
+    )
+      return res.status(400).json("Some inputs are missing.");
     const regimeNameAvailability = await pool.query(
       "SELECT * FROM regimes WHERE regime_name = $1",
       [regimeName]
@@ -71,10 +84,16 @@ exports.createRegime = async (req, res) => {
         0.0,
         regimeAffiliate.toLowerCase(),
         "ONGOING".toLowerCase(),
-        dayjs(regimeStartDate).format("YYYY-MM-DD"),
-        moment(regimeStartTime, "hmm").format("HH:mm"),
-        dayjs(regimeEndDate).format("YYYY-MM-DD"),
-        moment(regimeEndTime, "hmm").format("HH:mm"),
+        regimeStartDate,
+        regimeStartTime,
+        regimeEndDate,
+        regimeEndTime,
+        // dayjs(regimeStartDate).format("YYYY-MM-DD"),
+        // regimeStartTime,
+        // moment(regimeStartTime, "hmm").format("HH:mm"),
+        // dayjs(regimeEndDate).format("YYYY-MM-DD"),
+        // regimeEndTime,
+        // moment(regimeEndTime, "hmm").format("HH:mm"),
         dayjs().format("YYYY-MM-DD"),
         dayjs().format("HH:mm:ss"),
         regimeDescription,
@@ -139,8 +158,8 @@ exports.createRegime = async (req, res) => {
       )} type of event, thank you for choosing Reventlify.`, // plain text body
       html: `<h2>Regime Creation Successful</h2>
         <p>${capNsmalz.neat(
-          userName
-        )} you have successfully created ${newRegime.rows[0].regime_name.toUpperCase()} a ${capNsmalz.neat(
+        userName
+      )} you have successfully created ${newRegime.rows[0].regime_name.toUpperCase()} a ${capNsmalz.neat(
         newRegime.rows[0].regime_type
       )} type of event, thank you for choosing <strong>Reventlify</strong>.</p>`, //HTML message
     };

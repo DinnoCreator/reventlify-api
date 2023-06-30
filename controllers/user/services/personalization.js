@@ -1,6 +1,7 @@
 const pool = require("../../../db");
 const dayjs = require("dayjs");
 const randomString = require("random-string");
+const { clientDetails } = require("../../../utilities/percentagesAndBalance");
 
 exports.personalizationChecker = async (req, res) => {
   const user = req.user;
@@ -50,3 +51,13 @@ exports.personalization = async (req, res) => {
     return res.status(500).json(error.message);
   }
 };
+
+exports.userChecker = async (req, res) => {
+  const user = req.user;
+  try {
+    const check = await clientDetails(user);
+    return res.status(200).json({ userName: check.client_name, userPhoto: check.client_photo });
+  } catch (error) {
+    return res.status(500).json(error.message);
+  }
+}

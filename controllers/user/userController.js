@@ -12,6 +12,9 @@ const viii = require("../user/services/events/regime_creator_services/ticketBoug
 
 /* clients routes begining*/
 // personalizationChecker
+exports.whoIs = i.userChecker;
+
+// personalizationChecker
 exports.personalizationChecker = i.personalizationChecker;
 
 // personalization

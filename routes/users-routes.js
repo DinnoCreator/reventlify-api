@@ -15,6 +15,9 @@ router.get(
 );
 
 // personalization
+router.get("/whois", authenticateToken, users.whoIs);
+
+// personalization
 router.post("/personalization", authenticateToken, users.personalization);
 
 // queries regimes online

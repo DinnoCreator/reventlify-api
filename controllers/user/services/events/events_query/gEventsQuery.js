@@ -60,6 +60,8 @@ exports.eventQueryPersonalizedOrNot = async (req, res) => {
         regimes.regime_media, 
         regimes.regime_type,
         regimes.regime_city,
+        regime_start_date,
+        regime_start_time,
         regimes.c_date,
         regimes.c_time,
         min(pricings.pricing_amount) as min_ticket_price
@@ -75,6 +77,8 @@ exports.eventQueryPersonalizedOrNot = async (req, res) => {
         regimes.regime_media, 
         regimes.regime_type,
         regimes.regime_city,
+        regime_start_date,
+        regime_start_time,
         regimes.c_date,
         regimes.c_time
         ORDER BY (regimes.c_date, regimes.c_time) DESC
@@ -103,28 +107,37 @@ exports.offline = async (req, res) => {
     // gets regimes offline
     const regimesOffline = await pool.query(
       `
-        SELECT 
-          regimes.regime_id,
-          regimes.regime_name, 
-          regimes.regime_media, 
-          regimes.regime_type,
-          regimes.regime_city,
-          regimes.c_date,
-          regimes.c_time,
-          min(pricings.pricing_amount) as min_ticket_price
-          FROM regimes 
-          LEFT OUTER JOIN pricings  
-          ON
-          regimes.regime_id = pricings.regime_id 
-          GROUP BY 
-          regimes.regime_id,
-          regimes.regime_name, 
-          regimes.regime_media, 
-          regimes.regime_type,
-          regimes.regime_city,
-          regimes.c_date,
-          regimes.c_time
-          ORDER BY (regimes.c_date, regimes.c_time) DESC
+      SELECT 
+      clients.client_name,
+      regimes.regime_id,
+      regimes.regime_name, 
+      regimes.regime_media, 
+      regimes.regime_type,
+      regimes.regime_city,
+      regime_start_date,
+      regime_start_time,
+      regimes.c_date,
+      regimes.c_time,
+      min(pricings.pricing_amount) as min_ticket_price
+      FROM pricings 
+      LEFT JOIN regimes  
+      ON
+      pricings.regime_id = regimes.regime_id 
+      LEFT JOIN clients
+      ON
+      clients.client_id = regimes.creator_id
+      GROUP BY 
+      clients.client_name,
+      regimes.regime_id,
+      regimes.regime_name, 
+      regimes.regime_media, 
+      regimes.regime_type,
+      regimes.regime_city,
+      regime_start_date,
+      regime_start_time,
+      regimes.c_date,
+      regimes.c_time
+      ORDER BY (regimes.c_date, regimes.c_time) DESC
         `
     );
     if (regimesOffline.rows.length === 0)

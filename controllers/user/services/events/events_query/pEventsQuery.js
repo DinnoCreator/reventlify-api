@@ -1,7 +1,7 @@
 const pool = require("../../../../../db");
 
 exports.popularEventInACathegory = async (req, res) => {
-  const { cathegory } = req.body;
+  const { cathegory } = req.params;
   try {
     const mostPopular = await pool.query(
       `

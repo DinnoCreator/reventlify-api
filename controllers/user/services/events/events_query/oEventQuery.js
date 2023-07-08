@@ -55,7 +55,7 @@ exports.oneEvent = async (req, res) => {
 
         // gets all the regime's pricing
         const eventPricings = await pool.query(
-            "SELECT * FROM pricings WHERE regime_id = $1",
+            "SELECT * FROM pricings WHERE regime_id = $1 ORDER BY (pricing_amount) ASC",
             [regimeID]
         );
 

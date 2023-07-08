@@ -11,7 +11,7 @@ exports.pricingQueryOnline = async (req, res) => {
     );
 
     // returns it to the client
-    return res.status(200).json({ eventPricings: eventPricings });
+    return res.status(200).json({ eventPricings: eventPricings.rows });
   } catch (error) {
     return res.status(500).json(error.message);
   }
@@ -19,7 +19,7 @@ exports.pricingQueryOnline = async (req, res) => {
 
 exports.pricingQueryOffline = async (req, res) => {
   // get regime id from body
-  const { regimeID } = req.body;
+  const { regimeID } = req.params;
   try {
     // gets all the regime's pricing
     const eventPricings = await pool.query(
@@ -28,7 +28,7 @@ exports.pricingQueryOffline = async (req, res) => {
     );
 
     // returns it to the client
-    return res.status(200).json({ eventPricings: eventPricings });
+    return res.status(200).json({ eventPricings: eventPricings.rows });
   } catch (error) {
     return res.status(500).json(error.message);
   }

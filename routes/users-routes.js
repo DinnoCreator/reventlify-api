@@ -20,6 +20,9 @@ router.get("/whois", authenticateToken, users.whoIs);
 // personalization
 router.post("/personalization", authenticateToken, users.personalization);
 
+// queries event
+router.get("/event/:regimeID", users.whichEvent);
+
 // queries regimes online
 router.post("/regimesonline", authenticateToken, users.regimesQueryOnline);
 
@@ -39,7 +42,7 @@ router.post("/searchevents", users.searchEvents);
 router.post("/pricingsonline", authenticateToken, users.pricingsOnline);
 
 // queries pricings offline
-router.post("/pricingsoffline", users.pricingsOffline);
+router.get("/pricingsoffline/:regimeID", users.pricingsOffline);
 
 // ticket purchase
 router.post("/buyticket", authenticateToken, users.purchaseInitializer);

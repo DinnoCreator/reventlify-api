@@ -9,6 +9,7 @@ const vi = require("../user/services/tickets/ticketPurchase");
 const vii = require("../user/services/tickets/ticketsQuery");
 const viiSub = require("../user/services/tickets/ticketShare");
 const viii = require("../user/services/events/regime_creator_services/ticketBoughtUpdate");
+const ix = require("../user/services/events/events_query/oEventQuery");
 
 /* clients routes begining*/
 // personalizationChecker
@@ -25,6 +26,9 @@ exports.regimesQueryOnline = ii.eventQueryPersonalizedOrNot;
 
 // queries regimes offline
 exports.regimesQueryOffline = ii.offline;
+
+// queries event offline
+exports.whichEvent = ix.oneEvent;
 
 // queries regimes most popular event in a cathegory
 exports.mostPopularInCat = iiSub.popularEventInACathegory;

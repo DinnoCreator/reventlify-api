@@ -294,3 +294,40 @@ SELECT
 	  tickets.ticket_buyer_id,
 	  tickets.c_date,
 	  tickets.c_time;
+
+      SELECT 
+  clients.client_name,
+  regimes.regime_id,
+  regimes.regime_name, 
+  regimes.regime_media, 
+  regimes.regime_type,
+  regimes.regime_address,
+  regimes.regime_city,
+  regimes.regime_state,
+  regime_start_date,
+  regime_start_time,
+  regimes.c_date,
+  regimes.c_time,
+  min(pricings.pricing_amount) as min_ticket_price
+  FROM pricings 
+  LEFT JOIN regimes  
+  ON
+  pricings.regime_id = regimes.regime_id 
+  LEFT JOIN clients
+  ON
+  clients.client_id = regimes.creator_id
+  WHERE regimes.regime_id = 'cf6721476481'
+  GROUP BY 
+  clients.client_name,
+  regimes.regime_id,
+  regimes.regime_name, 
+  regimes.regime_media, 
+  regimes.regime_type,
+  regimes.regime_address,
+  regimes.regime_city,
+  regimes.regime_state,
+  regime_start_date,
+  regime_start_time,
+  regimes.c_date,
+  regimes.c_time
+  ORDER BY (regimes.c_date, regimes.c_time) DESC;

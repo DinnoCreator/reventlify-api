@@ -111,6 +111,7 @@ exports.ticketsPurchase = async (req, res) => {
 };
 
 exports.paystackWebhook = async (req, res) => {
+  console.log('i clicked');
   try {
     const secret = process.env.PAYSTACK_SECRET_KEY;
     const hash = crypto

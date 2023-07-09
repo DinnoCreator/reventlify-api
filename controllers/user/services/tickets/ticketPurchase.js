@@ -145,7 +145,7 @@ exports.paystackWebhook = async (req, res) => {
       // regime details
       const regimeDetails = await pool.query(
         "SELECT creator_id, regime_accbal, regime_name, regime_type FROM regimes WHERE regime_id = $1",
-        [regimeId]
+        [regimeId.toLowerCase()]
       );
 
       // regime creator details

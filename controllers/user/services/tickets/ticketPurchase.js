@@ -413,6 +413,6 @@ exports.paystackWebhook = async (req, res) => {
       return res.status(200);
     }
   } catch (error) {
-    return;
+    return console.log(error.message);
   }
 };

@@ -18,8 +18,9 @@ const {
 // ticket purchase service
 exports.ticketsPurchase = async (req, res) => {
   const userId = req.user;
+  const email = req.email;
   // request body from the clients
-  const { email, amount, pricingId, regimeId, affiliate } = req.body;
+  const { amount, pricingId, regimeId, affiliate } = req.body;
   try {
     // gets the amount for the ticket and the id for that pricing
     const pricingAmount = await pool.query(
@@ -101,7 +102,7 @@ exports.ticketsPurchase = async (req, res) => {
       },
     });
 
-    return res.status(200).json(response.data.data);
+    return res.status(200).json(response.data.data.authorization_url);
   } catch (error) {
     // Handle any errors that occur during the request
     console.error(error);

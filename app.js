@@ -10,7 +10,7 @@ const authRoute = require("./routes/auth-routes");
 const usersRoute = require("./routes/users-routes");
 
 const app = express();
-const whitelist = [process.env.URL, "https://api.paystack.co"];
+const whitelist = ["https://api.paystack.co", process.env.URL,];
 const corsOptions = {
   optionsSuccessStatus: 200,
   Credential: true,

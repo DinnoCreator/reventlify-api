@@ -13,7 +13,7 @@ const app = express();
 const whitelist = [process.env.URL, "https://api.paystack.co"];
 const corsOptions = {
   optionsSuccessStatus: 200,
-  // Credential: true,
+  Credential: true,
   // origin: function (origin, callback) {
   //   if (whitelist.indexOf(origin) !== -1) {
   //     callback(null, true);

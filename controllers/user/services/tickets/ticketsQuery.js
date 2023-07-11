@@ -60,6 +60,7 @@ exports.ticketsQuery = async (req, res) => {
       `
       SELECT 
       regimes.regime_media,
+      regimes.regime_status,
       regimes.regime_name,
       tickets.ticket_id,
       tickets.c_date,
@@ -74,6 +75,7 @@ exports.ticketsQuery = async (req, res) => {
       WHERE ticket_owner_id = $1
       GROUP BY 
       regimes.regime_media,
+      regimes.regime_status,
       regimes.regime_name,
       tickets.ticket_id,
       tickets.c_date,

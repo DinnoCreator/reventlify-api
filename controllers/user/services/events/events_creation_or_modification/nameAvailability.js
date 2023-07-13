@@ -1,7 +1,8 @@
 const pool = require("../../../../../db");
+const _ = require('lodash');
 
 exports.nameAvailability = async (req, res) => {
-  const { regimeName } = req.body;
+  const regimeName  = _.trim(req.body.regimeName, '`_- ,:;/.{}[]()|?"*^%#@!~+&%');
   const user = req.user;
   try {
     if (regimeName.length === 0) res.status(400).json("Empty search input");

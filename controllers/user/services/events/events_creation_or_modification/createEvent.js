@@ -6,7 +6,6 @@ const dayjs = require("dayjs");
 const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
 const idGenerator = require("../../../../../utilities/IDGenerator");
-const moment = require("moment");
 
 exports.createRegime = async (req, res) => {
   const userId = req.user;

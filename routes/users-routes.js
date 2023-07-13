@@ -69,6 +69,9 @@ router.post("/regimecreate", authenticateToken, users.regimeCreate);
 
 // gets last ten tickets purchase
 router.get("/lasttentickets/:regimeId", authenticateToken, users.lastTen);
+
+// ticket sales analysis for today and yesterday
+router.get("/salesty/:regimeId", authenticateToken, users.salesForTAY);
 /* regime creators routes ending*/
 
 module.exports = router;

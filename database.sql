@@ -331,3 +331,103 @@ SELECT
   regimes.c_date,
   regimes.c_time
   ORDER BY (regimes.c_date, regimes.c_time) DESC;
+
+-- total no of tickets bought in a regime
+ WITH most_popular AS (SELECT 
+        regimes.regime_name,
+        pricings.pricing_name,
+        pricings.pricing_amount,
+        COUNT(pricings.regime_id) AS tickets_bought FROM tickets
+        LEFT JOIN pricings
+        ON
+        tickets.pricing_id = pricings.pricing_id
+        LEFT JOIN regimes
+        ON
+        pricings.regime_id = regimes.regime_id
+		WHERE regimes.regime_id = 'pt1418836593'
+        GROUP BY 
+        regimes.regime_name,
+        pricings.pricing_name,
+        pricings.pricing_amount,
+        tickets.pricing_id, 
+        pricings.regime_id, 
+        regimes.regime_type)
+		SELECT SUM(tickets_bought) as tickets_bought, most_popular.regime_name
+		from most_popular
+        GROUP BY most_popular.regime_name;
+
+-- no of tickets bought in a particular date
+WITH the_source AS (SELECT 
+        regimes.regime_name,
+        regimes.regime_id,
+        pricings.pricing_name,
+		tickets.c_date,
+        COUNT(tickets.ticket_id) AS tickets_bought,
+        (pricings.pricing_amount * COUNT(pricings.regime_id)) AS total_amount,
+		pricings.pricing_amount
+		FROM tickets
+        LEFT JOIN pricings
+        ON
+        tickets.pricing_id = pricings.pricing_id
+        LEFT JOIN regimes
+        ON
+        pricings.regime_id = regimes.regime_id
+		WHERE regimes.regime_id = 'pt1418836593' and tickets.c_date = '2023-06-15'
+		GROUP BY 
+        regimes.regime_name,
+        regimes.regime_id,
+        pricings.pricing_name,
+		pricings.pricing_amount,
+		tickets.c_date)
+		SELECT SUM(total_amount) as total_amount, 
+		SUM(tickets_bought) as tickets_bought, 
+		the_source.regime_name, 
+		the_source.c_date, 
+		the_source.regime_id
+		from the_source
+        GROUP BY the_source.regime_name, the_source.c_date, the_source.regime_id;
+        -- 
+WITH most_popular AS (SELECT 
+        regimes.regime_name,
+        pricings.pricing_name,
+        pricings.pricing_amount,
+		tickets.c_date,
+        COUNT(pricings.regime_id) AS tickets_bought FROM tickets
+        LEFT JOIN pricings
+        ON
+        tickets.pricing_id = pricings.pricing_id
+        LEFT JOIN regimes
+        ON
+        pricings.regime_id = regimes.regime_id
+		WHERE regimes.regime_id = 'pt1418836593' and tickets.c_date = '2023-06-15'
+        GROUP BY 
+        regimes.regime_name,
+        pricings.pricing_name,
+        pricings.pricing_amount,
+        tickets.pricing_id, 
+        pricings.regime_id, 
+        regimes.regime_type,
+		tickets.c_date)
+		SELECT SUM(tickets_bought * most_popular.pricing_amount) as tickets_bought
+		from most_popular; 
+-- no of tickets bought in a particular date and amount for each pricing
+SELECT 
+        regimes.regime_name,
+        pricings.pricing_name,
+		tickets.c_date,
+        COUNT(pricings.regime_id) AS tickets_bought,
+        (pricings.pricing_amount * COUNT(pricings.regime_id)) AS total_amount,
+		pricings.pricing_amount
+		FROM tickets
+        LEFT JOIN pricings
+        ON
+        tickets.pricing_id = pricings.pricing_id
+        LEFT JOIN regimes
+        ON
+        pricings.regime_id = regimes.regime_id
+		WHERE regimes.regime_id = 'pt1418836593' and tickets.c_date = '2023-06-15'
+		GROUP BY 
+        regimes.regime_name,
+        pricings.pricing_name,
+		pricings.pricing_amount,
+		tickets.c_date;

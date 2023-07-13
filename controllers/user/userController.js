@@ -10,6 +10,7 @@ const vii = require("../user/services/tickets/ticketsQuery");
 const viiSub = require("../user/services/tickets/ticketShare");
 const viii = require("../user/services/events/regime_creator_services/ticketBoughtUpdate");
 const ix = require("../user/services/events/events_query/oEventQuery");
+const x = require("../user/services/events/regime_creator_services/ticketBoughtTAY_comparison");
 
 /* clients routes begining*/
 // personalizationChecker
@@ -73,4 +74,7 @@ exports.regimeCreate = iv.createRegime;
 
 // last ten tickets bought
 exports.lastTen = viii.lastTenTicketBoughtUpdate;
+
+// ticket sales analysis for today and yesterday
+exports.salesForTAY = x.ticketBoughtTAY_comparison;
 /* regime creators routes ending*/

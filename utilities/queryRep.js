@@ -43,3 +43,36 @@ exports.salesForTheDay = async (regimeId, date) => {
     return "Error method not allowed";
   }
 };
+
+exports.nameCheckerRep = async (user, name) => {
+  try {
+    if (name.length === 0) res.status(400).json("Empty search input");
+
+    const nameCheck = await pool.query(
+      "SELECT * FROM regimes WHERE regime_name = $1",
+      [name.toLowerCase()]
+    );
+
+    if (nameCheck.rows.length > 0) {
+      const nameCheck1 = await pool.query(
+        "SELECT * FROM regimes WHERE regime_name = $1 and creator_id = $2",
+        [name.toLowerCase(), user]
+      );
+      const nameCheck2 = await pool.query(
+        "SELECT * FROM regimes WHERE regime_name = $1 and creator_id = $2 and regime_status = $3",
+        [name.toLowerCase(), user, "ongoing"]
+      );
+      if (nameCheck1.rows.length === 0 && nameCheck2.rows.length === 0) {
+        return 'not ok';
+      } else if (nameCheck1.rows.length > 0 && nameCheck2.rows.length > 0) {
+        return 'not ok';
+      } else {
+        return "ok";
+      }
+    }
+    return 'ok';
+  } catch (error) {
+    console.log('something went wrong');
+    return 'something went wrong';
+  }
+};

@@ -6,13 +6,14 @@ const dayjs = require("dayjs");
 const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
 const idGenerator = require("../../../../../utilities/IDGenerator");
+const _ = require('lodash');
+const { nameCheckerRep } = require("../../../../../utilities/queryRep");
 
 exports.createRegime = async (req, res) => {
   const userId = req.user;
   const userName = req.name;
   const email = req.email;
   const {
-    regimeName,
     regimeType,
     regimeDescription,
     regimeAddress,
@@ -28,6 +29,7 @@ exports.createRegime = async (req, res) => {
     regimeEndDate,
     regimeEndTime,
   } = req.body;
+  const regimeName  = _.trim(req.body.regimeName, '`_- ,:;/.{}[]()|?"*^%#@!~+&%');
   try {
     // Checks name availability
     if (regimeName.length === 0)
@@ -47,8 +49,11 @@ exports.createRegime = async (req, res) => {
       [regimeName]
     );
     // Checks name availability
-    if (regimeNameAvailability.rows.length === 1)
-      return res.status(409).json("Regime name already exists.");
+    // if (regimeNameAvailability.rows.length === 1)
+    //   return res.status(409).json("Regime name already exists.");
+    const nameCheckResult = await nameCheckerRep(userId, regimeName);
+    if (nameCheckResult !== 'ok')
+    return res.status(409).json("Regime name already in use.");
 
     // Checks media file size
     if (Number(sizeChecker.sizeChecker(regimeMediaBase64).MB) > Number(10))

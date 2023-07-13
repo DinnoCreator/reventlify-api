@@ -2,6 +2,7 @@ const moment = require("moment");
 const { salesForTheDay } = require("../../../../../utilities/queryRep");
 const {
   regimeDetails,
+  percentages,
 } = require("../../../../../utilities/percentagesAndBalance");
 
 exports.ticketBoughtTAY_comparison = async () => {
@@ -28,12 +29,13 @@ exports.ticketBoughtTAY_comparison = async () => {
     const todaySales = await salesForTheDay(regimeId, today);
     const yesterdaySales = await salesForTheDay(regimeId, yesterday);
 
+    const regimeTypePercent = await percentages(regimeDetailss[0].regime_type);
     // returns sales amount
     const amount = (check) => {
       if (check.rows.legnth === 0) {
         return 0;
       } else {
-        return Number(check.rows[0].total_amount);
+        return (Number(check.rows[0].total_amount) * regimeTypePercent) / 100;
       }
     };
 

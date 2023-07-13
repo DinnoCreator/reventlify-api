@@ -117,6 +117,13 @@ exports.createRegime = async (req, res) => {
       );
     });
 
+    const creatorRoleAssigner = await pool.query(
+      `
+    INSERT INTO regime_roles(partcipant_id, regime_id, regime_role) 
+    VALUES($1, $2, $3) RETURNING *
+    `,
+      [newRegime.rows[0].creator_id, newRegime.rows[0].regime_id, "creator"]
+    );
     //credentials for email transportation
     const transport = nodemailer.createTransport({
       host: "smtp.office365.com",
@@ -157,8 +164,8 @@ exports.createRegime = async (req, res) => {
       )} type of event, thank you for choosing Reventlify.`, // plain text body
       html: `<h2>Regime Creation Successful</h2>
         <p>${capNsmalz.neat(
-        userName
-      )} you have successfully created ${newRegime.rows[0].regime_name.toUpperCase()} a ${capNsmalz.neat(
+          userName
+        )} you have successfully created ${newRegime.rows[0].regime_name.toUpperCase()} a ${capNsmalz.neat(
         newRegime.rows[0].regime_type
       )} type of event, thank you for choosing <strong>Reventlify</strong>.</p>`, //HTML message
     };

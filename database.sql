@@ -72,6 +72,11 @@ CREATE TABLE regimes (
     c_date DATE NOT NULL,
     c_time TIME NOT NULL
 );
+CREATE TABLE regime_roles (
+    partcipant_id TEXT NOT NULL REFERENCES clients(client_id) ON DELETE CASCADE ON UPDATE CASCADE,
+    regime_id TEXT NOT NULL REFERENCES regimes(regime_id) ON DELETE CASCADE ON UPDATE CASCADE,
+    regime_role TEXT NOT NULL 
+)
 CREATE TABLE pricings (
     pricing_id TEXT NOT NULL UNIQUE,
     regime_id TEXT NOT NULL REFERENCES regimes(regime_id) ON DELETE CASCADE ON UPDATE CASCADE,

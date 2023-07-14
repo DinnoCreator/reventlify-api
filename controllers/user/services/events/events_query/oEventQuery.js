@@ -9,6 +9,7 @@ exports.oneEvent = async (req, res) => {
             `
           SELECT 
           clients.client_name,
+          clients.client_photo,
           regimes.regime_id,
           regimes.regime_name, 
           regimes.regime_media, 
@@ -33,6 +34,7 @@ exports.oneEvent = async (req, res) => {
           WHERE regimes.regime_id = $1
           GROUP BY 
           clients.client_name,
+          clients.client_photo,
           regimes.regime_id,
           regimes.regime_name, 
           regimes.regime_media, 

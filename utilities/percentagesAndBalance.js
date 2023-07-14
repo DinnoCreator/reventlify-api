@@ -81,6 +81,20 @@ exports.clientDetails = async (clientId) => {
   }
 };
 
+exports.clientDetailsCustomizable = async (clientId) => {
+  try {
+    // client details
+    const clientDetails = await pool.query(
+      "SELECT * FROM clients WHERE client_id = $1",
+      [clientId]
+    );
+
+    return clientDetails.rows;
+  } catch (error) {
+    return "Error method not allowed";
+  }
+};
+
 exports.regimeDetails = async (regimeId) => {
   try {
     // client details

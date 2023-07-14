@@ -1,8 +1,12 @@
 const pool = require("../../../../../db");
+const {
+  clientDetailsCustomizable,
+} = require("../../../../../utilities/percentagesAndBalance");
 
 exports.regimeRoles = async (req, res) => {
   const user = req.user;
   try {
+    const profile = await clientDetailsCustomizable(user);
     const roles = await pool.query(
       `
         SELECT 
@@ -36,9 +40,24 @@ exports.regimeRoles = async (req, res) => {
 
     // if no regime found
     if (roles.rows === 0)
-      return res.status(202).json("You are not part of any regime");
-    // else
-    return res.status(200).json(roles.rows);
+      return res.status(200).json({
+        profile: {
+          clientImg: profile[0].client_photo,
+          clientName: profile[0].client_name,
+          clientState: profile[0].client_state,
+          clientCity: profile[0].client_city,
+        },
+        roles: [],
+      });
+    return res.status(200).json({
+      profile: {
+        clientImg: profile[0].client_photo,
+        clientName: profile[0].client_name,
+        clientState: profile[0].client_state,
+        clientCity: profile[0].client_city,
+      },
+      roles: roles.rows,
+    });
   } catch (error) {
     return res.status(500).json(error.message);
   }

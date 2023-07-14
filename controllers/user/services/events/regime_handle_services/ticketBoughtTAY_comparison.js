@@ -23,7 +23,7 @@ exports.ticketBoughtTAY_comparison = async () => {
 
     // if user logged in is not permitted to access the result response
     if (regimeDetailss[0].creator_id !== user)
-      return res.status(403).json("You are not permitted to access the result");
+      return res.status(402).json("You are not permitted to access the result");
 
     // get sales
     const todaySales = await salesForTheDay(regimeId, today);

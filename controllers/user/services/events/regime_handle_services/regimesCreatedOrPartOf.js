@@ -15,6 +15,7 @@ exports.regimeRoles = async (req, res) => {
           regimes.regime_name,
           regimes.regime_id,
           regimes.regime_media,
+          regimes.regime_status,
           regimes.regime_start_date,
           regimes.regime_start_time,
           regimes.c_date, regimes.c_time 
@@ -29,6 +30,7 @@ exports.regimeRoles = async (req, res) => {
           regimes.regime_name,
           regimes.regime_id,
           regimes.regime_media,
+          regimes.regime_status,
           regimes.regime_start_date,
           regimes.regime_start_time,
           regimes.c_date,

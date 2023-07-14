@@ -38,7 +38,7 @@ exports.salesForTheDay = async (regimeId, date) => {
       [regimeId, date]
     );
 
-    return sales;
+    return sales.rows;
   } catch (error) {
     return "Error method not allowed";
   }

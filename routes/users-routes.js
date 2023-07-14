@@ -60,18 +60,24 @@ router.get("/ticketowned/:ticketId", authenticateToken, users.ticketOwned);
 router.put("/tickettransfer", authenticateToken, users.ticketShare);
 /* clients routes ending*/
 
-/* regime creators routes begining*/
+/* regime routes begining*/
 // checks regime name
 router.post("/regimecheck", authenticateToken, users.nameCheck);
 
 // creates regime
 router.post("/regimecreate", authenticateToken, users.regimeCreate);
 
-// gets last ten tickets purchase
-router.get("/lasttentickets/:regimeId", authenticateToken, users.lastTen);
+// regimes created or part of
+router.get("/regimeroles", authenticateToken, users.regimeCreatedOrPart);
+
+// regime dashboard
+router.get("/regime/dashboard/static", authenticateToken, users.regimeDashboardStatic);
 
 // ticket sales analysis for today and yesterday
-router.get("/salesty/:regimeId", authenticateToken, users.salesForTAY);
+router.get("/regime/dashboard/salesty/:regimeId", authenticateToken, users.salesForTAY);
+
+// gets last ten tickets purchase
+router.get("/regime/dashboard/lasttentickets/:regimeId", authenticateToken, users.lastTen);
 /* regime creators routes ending*/
 
 module.exports = router;

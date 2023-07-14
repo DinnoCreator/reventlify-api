@@ -8,9 +8,10 @@ const v = require("../user/services/events/pricing_query/pricingQuery");
 const vi = require("../user/services/tickets/ticketPurchase");
 const vii = require("../user/services/tickets/ticketsQuery");
 const viiSub = require("../user/services/tickets/ticketShare");
-const viii = require("../user/services/events/regime_creator_services/ticketBoughtUpdate");
+const viii = require("./services/events/regime_handle_services/ticketBoughtUpdate");
 const ix = require("../user/services/events/events_query/oEventQuery");
-const x = require("../user/services/events/regime_creator_services/ticketBoughtTAY_comparison");
+const x = require("./services/events/regime_handle_services/ticketBoughtTAY_comparison");
+const xi = require("./services/events/regime_handle_services/regimesCreatedOrPartOf");
 
 /* clients routes begining*/
 // personalizationChecker
@@ -65,16 +66,22 @@ exports.ticketOwned = vii.ticketQuery;
 exports.ticketShare = viiSub.ticketShare;
 /* clients routes ending*/
 
-/* regime creators routes begining*/
+/* regime routes begining*/
 // checks regime name
 exports.nameCheck = iii.nameAvailability;
 
 // creates regime
 exports.regimeCreate = iv.createRegime;
 
-// last ten tickets bought
-exports.lastTen = viii.lastTenTicketBoughtUpdate;
+// regimes created or part of
+exports.regimeCreatedOrPart = xi.regimeRoles;
+
+// regime dashboard
+exports.regimeDashboardStatic = xi.regimeDashWithRole;
 
 // ticket sales analysis for today and yesterday
 exports.salesForTAY = x.ticketBoughtTAY_comparison;
+
+// last ten tickets bought
+exports.lastTen = viii.lastTenTicketBoughtUpdate;
 /* regime creators routes ending*/

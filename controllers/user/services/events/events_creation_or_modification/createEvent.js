@@ -29,7 +29,7 @@ exports.createRegime = async (req, res) => {
     regimeEndDate,
     regimeEndTime,
   } = req.body;
-  const regimeName  = _.trim(req.body.regimeName, '`_- ,:;/.{}[]()|?"*^%#@!~+&%');
+  const regimeName  = _.trim(req.body.regimeName.replace(/\\/g, ""), '`_- ,:;/.{}[]()<>|?"*^%#@!~+&%');
   try {
     // Checks name availability
     if (regimeName.length === 0)
@@ -44,13 +44,8 @@ exports.createRegime = async (req, res) => {
       regimeEndTime.length === 0
     )
       return res.status(400).json("Some inputs are missing.");
-    const regimeNameAvailability = await pool.query(
-      "SELECT * FROM regimes WHERE regime_name = $1",
-      [regimeName]
-    );
+
     // Checks name availability
-    // if (regimeNameAvailability.rows.length === 1)
-    //   return res.status(409).json("Regime name already exists.");
     const nameCheckResult = await nameCheckerRep(userId, regimeName);
     if (nameCheckResult !== 'ok')
     return res.status(409).json("Regime name already in use.");

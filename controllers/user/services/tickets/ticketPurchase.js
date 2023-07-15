@@ -19,14 +19,176 @@ const {
 exports.ticketsPurchase = async (req, res) => {
   const userId = req.user;
   const email = req.email;
+  const userName = req.name;
   // request body from the clients
-  const { amount, pricingId, regimeId, affiliate } = req.body;
+  const { amount, pricingId, regimeId, affiliate, counter } = req.body;
   try {
+    // regime details
+    const regimeDetails = await pool.query(
+      "SELECT creator_id, regime_accbal, regime_name, regime_type FROM regimes WHERE regime_id = $1",
+      [regimeId.toLowerCase()]
+    );
+
+    // regime creator details
+    const regimeCreatorDetails = await pool.query(
+      "SELECT client_name, client_email FROM clients WHERE client_id = $1",
+      [regimeDetails.rows[0].creator_id]
+    );
     // gets the amount for the ticket and the id for that pricing
     const pricingAmount = await pool.query(
-      "SELECT pricing_amount, pricing_id, pricing_name FROM pricings WHERE pricing_id = $1",
+      "SELECT pricing_amount, pricing_id, pricing_name, pricing_available_seats FROM pricings WHERE pricing_id = $1",
       [pricingId]
     );
+
+    const ticketPrice = Number(pricingAmount.rows[0].pricing_amount);
+    const amountNumber = Number(amount);
+    // gets the number of tickets purchased
+    const numberOfTickets = amountNumber / ticketPrice;
+
+    // gets the remainder of the division of the amount paid by the actual ticket amount
+    const remainderChecker =
+      Number(amount) % Number(pricingAmount.rows[0].pricing_amount);
+
+    const affiliateChecker = (affiliate) => {
+      if (affiliate === "none") {
+        return null;
+      } else {
+        return `${affiliate}`;
+      }
+    };
+
+    const affiliatelog = affiliateChecker(affiliate);
+
+    // checks if ticket is sold out
+    if (ticketPrice === 0) {
+      const transaction = await pool.query(
+        "INSERT INTO transactions(transaction_id, transaction_type, client_id, regime_id, pricing_id, reference_number, amount, transaction_status, transaction_description, transaction_date, transaction_time) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *",
+        [
+          await transactionID(),
+          "purchase",
+          userId,
+          regimeId,
+          pricingId,
+          "free",
+          Number(amount),
+          "success",
+          "amount matches pricing",
+          dayjs().format("YYYY-MM-DD"),
+          dayjs().format("HH:mm:ss"),
+        ]
+      );
+      // loop to create the number of tickets purchased in the database
+      for (let i = 1; i <= Number(counter); i++) {
+        if (i <= 10) {
+          await pool.query(
+            "INSERT INTO tickets(ticket_id, pricing_id, attendance, transaction_id, ticket_buyer_id, ticket_owner_id, ticket_amount, ticket_status, affiliate_id, c_date, c_time) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *",
+            [
+              await ticketID(),
+              pricingAmount.rows[0].pricing_id,
+              "pending",
+              transaction.rows[0].transaction_id,
+              userId,
+              userId,
+              ticketPrice,
+              "success",
+              affiliatelog,
+              dayjs().format("YYYY-MM-DD"),
+              dayjs().format("HH:mm:ss"),
+            ]
+          );
+        }
+      }
+
+      const availableSeats = Number(
+        pricingAmount.rows[0].pricing_available_seats - counter
+      );
+
+      await pool.query(
+        "UPDATE pricings set pricing_available_seats = $1 WHERE pricing_id = $2",
+        [availableSeats, pricingId]
+      );
+
+      //credentials for email transportation
+      const transport = nodemailer.createTransport({
+        host: "smtp.office365.com",
+        post: 587,
+        auth: {
+          user: "reventlifyhub@outlook.com",
+          pass: process.env.MAIL,
+        },
+      });
+
+      //ticket purchaser alert
+      const msg = {
+        from: "Reventlify <reventlifyhub@outlook.com>", // sender address
+        to: email, // list of receivers
+        subject: "Ticket Acquisition", // Subject line
+        text: `Congrats ${capNsmalz.neat(
+          userName
+        )} you just successfully Acquired ${counter} ${regimeDetails.rows[0].regime_name.toUpperCase()} ${pricingAmount.rows[0].pricing_name.toLowerCase()} ticket${
+          counter === 1 ? "" : "s"
+        }.`, // plain text body
+        html: `<h1>Ticket Acquisition</h1>
+      <p>Congrats ${capNsmalz.neat(
+        userName
+      )} you just successfully Aquired ${counter} <strong>${regimeDetails.rows[0].regime_name.toUpperCase()}</strong> ${pricingAmount.rows[0].pricing_name.toLowerCase()} ticket${
+          counter === 1 ? "" : "s"
+        }.</p>`, //HTML message
+      };
+
+      //regime creator alert
+      const msg1 = {
+        from: "Reventlify <reventlifyhub@outlook.com>", // sender address
+        to: regimeCreatorDetails.rows[0].client_email, // list of receivers
+        subject: "Ticket Acquisition", // Subject line
+        text: `Congrats ${capNsmalz.neat(
+          regimeCreatorDetails.rows[0].client_name
+        )}, ${capNsmalz.neat(
+          userName
+        )} just successfully Acquired ${counter} ${pricingAmount.rows[0].pricing_name.toLowerCase()} ticket${
+          counter === 1 ? "" : "s"
+        } for your ${regimeDetails.rows[0].regime_name.toUpperCase()} regime.`, // plain text body
+        html: `<h1>Ticket Acquisition</h1>
+      <p>Congrats ${capNsmalz.neat(
+        regimeCreatorDetails.rows[0].client_name
+      )},  ${capNsmalz.neat(
+          userName
+        )} just successfully Acquired ${counter} ${pricingAmount.rows[0].pricing_name.toLowerCase()} ticket${
+          counter === 1 ? "" : "s"
+        } for your <strong>${regimeDetails.rows[0].regime_name.toUpperCase()}</strong> regime.</p>`, //HTML message
+      };
+
+      //company alert
+      const msg2 = {
+        from: "Reventlify <reventlifyhub@outlook.com>", // sender address
+        to: "edijay17@gmail.com", // list of receivers
+        subject: "Ticket Acquisition", // Subject line
+        text: `Congrats, ${capNsmalz.neat(
+          userName
+        )} just successfully Acquired ${numberOfTickets} ${pricingAmount.rows[0].pricing_name.toLowerCase()} ticket${
+          counter === 1 ? "" : "s"
+        } for ${regimeDetails.rows[0].regime_name.toUpperCase()} regime.`, // plain text body
+        html: `<h1>Ticket Acquisition</h1>
+      <p>Congrats, ${capNsmalz.neat(
+        userName
+      )} just successfully Acquired ${counter} ${pricingAmount.rows[0].pricing_name.toLowerCase()} ticket${
+          counter === 1 ? "" : "s"
+        } for <strong>${regimeDetails.rows[0].regime_name.toUpperCase()}</strong> regime.</p>`, //HTML message
+      };
+
+      // send mail with defined transport object
+      await transport.sendMail(msg);
+      await transport.sendMail(msg1);
+      await transport.sendMail(msg2);
+
+      // final response
+      return res.status(200).json("http://reventlify.onrender.com/tickets");
+      // return res.status(200).json('http://localhost:3000/tickets');
+    }
+
+    // checks if ticket is sold out
+    if (Number(pricingAmount.rows[0].pricing_available_seats) === 0)
+      return res.status(404).json("Tickets sold out");
     // gets the number of tickets for that regime pricing owned by the client
     const ticketsBought = await pool.query(
       `SELECT ticket_id FROM tickets 
@@ -40,15 +202,6 @@ exports.ticketsPurchase = async (req, res) => {
           pricing_id = $4`,
       [userId, pricingId, userId, pricingId]
     );
-
-    const ticketPrice = Number(pricingAmount.rows[0].pricing_amount);
-    const amountNumber = Number(amount);
-    // gets the number of tickets purchased
-    const numberOfTickets = amountNumber / ticketPrice;
-
-    // gets the remainder of the division of the amount paid by the actual ticket amount
-    const remainderChecker =
-      Number(amount) % Number(pricingAmount.rows[0].pricing_amount);
 
     // checks if user has purchased up to 10 tickets for that regime pricing
     if (ticketsBought.rows.length === 10)
@@ -254,7 +407,7 @@ exports.paystackWebhook = async (req, res) => {
             [
               await ticketID(),
               pricingAmount.rows[0].pricing_id,
-              'pending',
+              "pending",
               transaction.rows[0].transaction_id,
               userId,
               userId,
@@ -390,7 +543,7 @@ exports.paystackWebhook = async (req, res) => {
           userName
         )} just successfully purchased ${numberOfTickets} ${pricingAmount.rows[0].pricing_name.toLowerCase()} ticket${
           numberOfTickets === 1 ? "" : "s"
-        } for ${regimeDetails.rows[0].regime_name.toUpperCase()} regimee and your current balance is N${
+        } for ${regimeDetails.rows[0].regime_name.toUpperCase()} regime and your current balance is N${
           companyTopUp.rows[0].company_accbal
         }.`, // plain text body
         html: `<h1>Ticket Purchase</h1>

@@ -71,7 +71,7 @@ router.post("/regimecreate", authenticateToken, users.regimeCreate);
 router.get("/regimeroles", authenticateToken, users.regimeCreatedOrPart);
 
 // regime dashboard
-router.get("/regime/dashboard/static", authenticateToken, users.regimeDashboardStatic);
+router.get("/regime/dashboard/static/:regimeId", authenticateToken, users.regimeDashboardStatic);
 
 // ticket sales analysis for today and yesterday
 router.get("/regime/dashboard/salesty/:regimeId", authenticateToken, users.salesForTAY);

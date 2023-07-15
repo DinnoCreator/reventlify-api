@@ -1,6 +1,7 @@
 const pool = require("../../../../../db");
 const {
   clientDetailsCustomizable,
+  regimeDetails,
 } = require("../../../../../utilities/percentagesAndBalance");
 
 exports.regimeRoles = async (req, res) => {
@@ -70,6 +71,9 @@ exports.regimeDashWithRole = async (req, res) => {
   //   client params
   const { regimeId } = req.params;
   try {
+    const regDet = await regimeDetails(regimeId);
+    if (regDet.length === 0)
+      return res.status(404).json("Regime does not exist");
     const dashboard = await pool.query(
       `
         SELECT clients.client_name,
@@ -107,13 +111,13 @@ exports.regimeDashWithRole = async (req, res) => {
           regimes.c_date,
           regimes.c_time
         `,
-      [user]
+      [user, regimeId]
     );
     // if no regime found
     if (dashboard.rows === 0)
       return res.status(400).json("You are not part of this regime");
     // else
-    return res.status(200).json(dashboard.rows);
+    return res.status(200).json(dashboard.rows[0]);
   } catch (error) {
     return res.status(500).json(error.message);
   }

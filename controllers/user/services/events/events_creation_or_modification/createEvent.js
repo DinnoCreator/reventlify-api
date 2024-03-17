@@ -119,7 +119,7 @@ exports.createRegime = async (req, res) => {
 
     const creatorRoleAssigner = await pool.query(
       `
-    INSERT INTO regime_roles(partcipant_id, regime_id, regime_role) 
+    INSERT INTO regime_roles(participant_id, regime_id, regime_role) 
     VALUES($1, $2, $3) RETURNING *
     `,
       [newRegime.rows[0].creator_id, newRegime.rows[0].regime_id, "creator"]

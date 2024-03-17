@@ -10,11 +10,11 @@ const authRoute = require("./routes/auth-routes");
 const usersRoute = require("./routes/users-routes");
 
 const app = express();
-const whitelist = ["https://api.paystack.co", process.env.URL];
-const corsOptions = {
-  optionsSuccessStatus: 200,
-  Credential: true,
-  origin: whitelist,
+// const whitelist = ["https://api.paystack.co", process.env.URL];
+// const corsOptions = {
+//   optionsSuccessStatus: 200,
+//   Credential: true,
+//   origin: whitelist,
   // origin: function (origin, callback) {
   //   if (whitelist.indexOf(origin) !== -1) {
   //     callback(null, true);
@@ -22,12 +22,12 @@ const corsOptions = {
   //     callback(new Error("Not allowed by CORS"));
   //   }
   // },
-};
-// const corsOptions = {
-//   optionsSuccessStatus: 200,
-//   Credential: true,
-//   origin: "*",
 // };
+const corsOptions = {
+  optionsSuccessStatus: 200,
+  Credential: true,
+  origin: "*",
+};
 
 //middlewares
 app.use(express.urlencoded({ extended: true }));

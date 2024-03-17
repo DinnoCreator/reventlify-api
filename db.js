@@ -10,13 +10,13 @@ const Pool = require("pg").Pool;
 // });
 
 const pool = new Pool({
-  user: "myapp_4hvr_user",
+  user: "all_db_93f5_user",
   // user: "postgres",
   password: process.env.DB_PASSWORD,
-  host: "dpg-ci30ahrhp8u1a1d74bog-a",
-  // host: "dpg-ci30ahrhp8u1a1d74bog-a.oregon-postgres.render.com",
+  host: "dpg-cnrbl9a1hbls73dusiig-a",
+  // host: "dpg-cnrbl9a1hbls73dusiig-a.oregon-postgres.render.com",
   port: 5432,
-  database: "myapp_4hvr",
+  database: "all_db_93f5",
   // database: "reventlify",
   // ssl: true,
 });
